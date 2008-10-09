@@ -115,7 +115,7 @@ main (int argc, char *argv[])
   num_vacuum = atoi (argv[2]);
 
 /* Connect to database */
-  EXEC SQL CONNECT TO tpcc USER USERNAME;
+  EXEC SQL CONNECT TO tpcc;/* USER USERNAME;*/
 /* Autocommit mode */
   EXEC SQL SET autocommit = ON;
 

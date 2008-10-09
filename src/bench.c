@@ -593,7 +593,7 @@ EXEC SQL BEGIN DECLARE SECTION;
 EXEC SQL END DECLARE SECTION;
 
 /* Conecting with the database */
-EXEC SQL CONNECT TO tpcc USER USERNAME;
+EXEC SQL CONNECT TO tpcc;/* USER USERNAME;*/
 
 EXEC SQL SET autocommit = ON;
 
@@ -857,7 +857,7 @@ EXEC SQL BEGIN DECLARE SECTION;
 EXEC SQL END DECLARE SECTION;
 
 /* Conecting to database   */
-EXEC SQL CONNECT TO tpcc USER USERNAME;
+EXEC SQL CONNECT TO tpcc;/* USER USERNAME;*/
 
 /* Obtainint the number of warehouses */
 EXEC SQL SELECT count(*) INTO :w FROM warehouse;
@@ -2027,7 +2027,7 @@ FILE *fcons;                    /*  Pointer to constants file */
 
 /************* Conecting to template1 **************/
 /* This database is created by default by postgreSQL */
-EXEC SQL CONNECT TO template1 USER USERNAME;
+EXEC SQL CONNECT TO template1;/* USER USERNAME;*/
 if (sqlca.sqlcode<0){
 
 	fprintf(stderr, "ERROR CONNECTING TO template1\n");
@@ -2050,7 +2050,7 @@ if (sqlca.sqlcode<0){
 EXEC SQL DISCONNECT;
 
 /************* CONNECTING to tpcc ***************/
-EXEC SQL CONNECT TO tpcc USER USERNAME;
+EXEC SQL CONNECT TO tpcc;/* USER USERNAME;*/
 
 /**************ERROR HANDLING********/
 if (sqlca.sqlcode<0){
@@ -3935,7 +3935,7 @@ EXEC SQL BEGIN DECLARE SECTION;
 EXEC SQL END DECLARE SECTION;
 
 /* Connecting with database */
-EXEC SQL CONNECT TO tpcc USER USERNAME;
+EXEC SQL CONNECT TO tpcc;/* USER USERNAME;*/
 
 /* Checking warehouse table */
 fprintf(stdout, "\tWarehouse table... ");
@@ -4124,7 +4124,7 @@ EXEC SQL BEGIN DECLARE SECTION;
 EXEC SQL END DECLARE SECTION;
 
 /* Connecting with tpcc */
-EXEC SQL CONNECT TO tpcc USER USERNAME;
+EXEC SQL CONNECT TO tpcc;/* USER USERNAME;*/
 
 fprintf(stdout,"\n\n\n\n\n\n\n		CARDINALITY OF TABLES:\n\n\n");
 EXEC SQL SELECT count(*) INTO :n_fil FROM warehouse;
@@ -4204,7 +4204,7 @@ void signal_term_exit();
 void signal_alarm();
 
 /*  Connecting with template1 */ 
-	EXEC SQL CONNECT TO template1 USER USERNAME;
+	EXEC SQL CONNECT TO template1;/* USER USERNAME;*/
 	if (sqlca.sqlcode<0){
 		printf("Error number: %d\n", sqlca.sqlcode);
 		printf("	%s\n", sqlca.sqlerrm.sqlerrmc);
@@ -4676,7 +4676,7 @@ strcat(filenameBuffer,"medida.log");
 			}
 
 			/* Connecting with template1 */
-			EXEC SQL CONNECT TO template1 USER USERNAME;
+			EXEC SQL CONNECT TO template1;/* USER USERNAME;*/
 			EXEC SQL SET autocommit = ON; 
 
 			/* Delete database */

@@ -1311,7 +1311,7 @@ key_t llave;  /*variable que contendrá las llaves para los recursos IPC*/
 key_t ident;  /*variable que contendrá los identificadores dentro de cada llave para los recursos IPC*/
 
 /* Conexión con el servidor SQL */
-EXEC SQL CONNECT TO tpcc USER USERNAME;
+EXEC SQL CONNECT TO tpcc; /*USER USERNAME;*/
 /*Se activa el modo autocommit para poder realizar transacciones*/
 EXEC SQL SET autocommit = ON;
 

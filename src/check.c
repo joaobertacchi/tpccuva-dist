@@ -73,7 +73,7 @@ main ()
   void sig_term ();		/* SIGTERM handler function */
 
 /* Connect to database */
-  EXEC SQL CONNECT TO tpcc USER USERNAME;
+  EXEC SQL CONNECT TO tpcc;/* USER USERNAME;*/
 /* Set autocommit mode */
   EXEC SQL SET autocommit = ON;
 
