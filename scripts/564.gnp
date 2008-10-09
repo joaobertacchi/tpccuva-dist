@@ -1,0 +1,14 @@
+# 564.eps file generation
+# (Plot according to Clause 5.6.4 TPC-C Standard)
+
+# set terminal postscript landscape 22
+set terminal postscript 22
+set size  29.7/21 , 1.
+set pointsize 1
+
+set output "564.eps"
+set title "Throughput of the New Order transaction versus Elapsed Time"
+set xlabel "Elapsed Time (seg)"
+set ylabel "Throughput (tpmC-uva)"
+plot [0: ELAPSED-TIME] "g4.dat" with lines
+

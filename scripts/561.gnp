@@ -1,0 +1,38 @@
+
+# 561.eps file generation
+# (Plot according to Clause 5.6.1 TPC-C Standard)
+
+set terminal postscript 22
+set size  29.7/21 , 1.
+set pointsize 1
+
+set output "561-NewOrder.eps"
+set title "Response Time Distribution, New Order transactions"
+set xlabel "Response Time (s)"
+set ylabel "Number of Transactions"
+plot [0: <4x90thPERCENTILE> ] "g1NewOrder.dat" with lines
+
+set output "561-Delivery.eps"
+set title "Response Time Distribution, Delivery transactions"
+set xlabel "Response Time (s)"
+set ylabel "Number of Transactions"
+plot [0: <4x90thPERCENTILE> ] "g1Delivery.dat" with lines
+
+set output "561-OrderStatus.eps"
+set title "Response Time Distribution, Order Status transactions"
+set xlabel "Response Time (s)"
+set ylabel "Number of Transactions"
+plot [0: <4x90thPERCENTILE> ] "g1OrderStatus.dat" with lines
+
+set output "561-Payment.eps"
+set title "Response Time Distribution, Payment transactions"
+set xlabel "Response Time (s)"
+set ylabel "Number of Transactions"
+plot [0: <4x90thPERCENTILE> ] "g1Payment.dat" with lines
+
+set output "561-StockLevel.eps"
+set title "Response Time Distribution, Stock Level transactions"
+set xlabel "Response Time (s)"
+set ylabel "Number of Transactions"
+plot [0: <4x90thPERCENTILE> ] "g1StockLevel.dat" with lines
+

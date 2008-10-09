@@ -1,0 +1,14 @@
+
+# 563.eps file generation
+# (Plot according to Clause 5.6.3 TPC-C Standard)
+
+set terminal postscript 22
+set size  29.7/21 , 1.
+set pointsize 1
+
+set output "563.eps"
+set title "Frequency Distribution of Think Times for the New Order Transaction"
+set xlabel "Think Time (seg)"
+set ylabel "Think Time Frequency"
+plot [0: 4xMEAN-THINK-TIME] "g3.dat" with lines
+
