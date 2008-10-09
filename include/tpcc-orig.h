@@ -12,7 +12,7 @@
 
 /* filenameBuffer is used to build the path to the auxiliary 
  * file being opened */
-char filenameBuffer[100];
+char filenameBuffer[200];
 
 /********************************************************************\
 |* Ficheros de Cabecera.                                            *|

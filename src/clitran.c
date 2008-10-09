@@ -1289,7 +1289,7 @@ main (int argc, char *argv[])
   int w;			/*almacén del terminal            */
   struct sembuf operacion;	/*estrctura de operación sobre el semáforo */
   char n_fichero[30];		/*cadena que contiene el nombre del fichero de bitácora */
-  char ssystem[50];		/*cadena donde se almacena la oden de copia de focheros de bitácora */
+  char ssystem[200];		/*cadena donde se almacena la oden de copia de focheros de bitácora */
   struct timeb sellohora;
   struct timeb sellohora2;	/* estructuras para almacenar sellos de hora */
   int tpensar;			/*tiempo de pensar del cliente */
