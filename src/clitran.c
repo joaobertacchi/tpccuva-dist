@@ -1302,6 +1302,11 @@ main (int argc, char *argv[])
     ORDER_STATUS, DELIVERY, STOCK_LEVEL
   };
   int ind_baraja[23];		/*vector de apuntadores a la baraja */
+  union semun {
+    int val;
+    struct semid_ds *buf;
+    ushort *array;
+  } semun_arg;
 
 /*Se comprueba que se han pasado correctamente los parámetros al programa*/
   if (argc != 6)
@@ -1518,7 +1523,8 @@ main (int argc, char *argv[])
   men.tran.msgtrm.sem_llave = w_id;	/*se introduce en el mensaje de conexión la llave del set de semaforos */
   men.tran.msgtrm.sem_ident = d_id - 1;	/*se introduce en el mensaje de conexión el indice dentro del set (DESDE CERO!) */
 
-  semctl (semid, d_id - 1, SETVAL, 0);	/*inicializamos el semaforo a 0: será el TM quien lo abra */
+  semun_arg.val = 0
+  semctl (semid, d_id - 1, SETVAL, semun_arg);	/*inicializamos el semaforo a 0: será el TM quien lo abra */
   /* permitiendonos leer la respuesta                      */
 
   fprintf (out, "ID. SEM: %d, ID. SHM: %d\n", semid, shmid);
@@ -1826,7 +1832,8 @@ main (int argc, char *argv[])
   men.id = cod_term;		/*identificador de terminal */
 
 /*forzamos el valor del semaforo a 0*/
-  if (semctl (semid, d_id - 1, SETVAL, 0) == -1)
+  semun_arg.val = 0
+  if (semctl (semid, d_id - 1, SETVAL, semun_arg) == -1)
      {
        fprintf (out, "EROR AL ASIGNAR VALOR AL SEMAFORO\n");
      };
