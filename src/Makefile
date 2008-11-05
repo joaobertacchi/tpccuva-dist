@@ -1,6 +1,6 @@
 
 CLIBS = -lecpg -lpq -lm
-EXECS = clien tm bench check vacuum
+EXECS = clien tm bench check vacuum bench_srv
 
 all: $(EXECS) Makefile
 	cp $(EXECS) ../bin
@@ -22,6 +22,16 @@ tm.o: tm.c ../include/tpcc.h
 	ecpg tm.c -o tt.c -D USERNAME=$(BENCH_USERNAME) 
 	gcc -c tt.c -I $(INCLUDEPATH) -L $(LIBSPATH) 
 	mv tt.o tm.o
+
+# Building the benchmark server ----------------------------------------------
+
+bench_srv: bench_srv.o
+	gcc -o bench_srv bench_srv.o extra.o -lm -I $(INCLUDEPATH) -L $(LIBSPATH) $(CLIBS)
+
+bench_srv.o: bench_srv.c ../include/tpcc.h
+	ecpg bench_srv.c -o tt_srv.c -D USERNAME=$(BENCH_USERNAME)
+	gcc -c -g tt_srv.c -I $(INCLUDEPATH) -L $(LIBSPATH)
+	mv tt_srv.o bench_srv.o
 
 # Building the benchmark main program ----------------------------------------
 

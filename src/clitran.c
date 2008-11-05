@@ -1523,7 +1523,7 @@ main (int argc, char *argv[])
   men.tran.msgtrm.sem_llave = w_id;	/*se introduce en el mensaje de conexión la llave del set de semaforos */
   men.tran.msgtrm.sem_ident = d_id - 1;	/*se introduce en el mensaje de conexión el indice dentro del set (DESDE CERO!) */
 
-  semun_arg.val = 0
+  semun_arg.val = 0;
   semctl (semid, d_id - 1, SETVAL, semun_arg);	/*inicializamos el semaforo a 0: será el TM quien lo abra */
   /* permitiendonos leer la respuesta                      */
 
@@ -1832,7 +1832,7 @@ main (int argc, char *argv[])
   men.id = cod_term;		/*identificador de terminal */
 
 /*forzamos el valor del semaforo a 0*/
-  semun_arg.val = 0
+  semun_arg.val = 0;
   if (semctl (semid, d_id - 1, SETVAL, semun_arg) == -1)
      {
        fprintf (out, "EROR AL ASIGNAR VALOR AL SEMAFORO\n");

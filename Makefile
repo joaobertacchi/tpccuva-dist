@@ -7,17 +7,17 @@
 
 # VARDIR stores where the auxiliary files will be stored during the
 # benchmark execution. Do not forget the last slash!
-VARDIR = $(HOME)/tpcc-uva/var/tpcc/
+VARDIR = $(HOME)/mestrado/tpcc-uva/var/tpcc/
 
 # EXECDIR stores where the executable files will be stored during the
 # installation. Do not forget the last slash!
-EXECDIR = $(HOME)/tpcc-uva/bin/
+EXECDIR = $(HOME)/mestrado/tpcc-uva/bin/
 
 # INCLUDEPATH stores the location of PostgreSQL include files.
-export INCLUDEPATH = $(HOME)/tpcc-uva/pgsql/include/
+export INCLUDEPATH = /usr/include/postgresql/pgsql/
 
 # LIBSPATH stores the location of PostgreSQL library files.
-export LIBSPATH = $(HOME)/tpcc-uva/pgsql/lib/
+export LIBSPATH = /usr/lib64/postgresql/
 
 # USERNAME stores the user name under which PostgreSQL will run. The
 # most common options are to run PostgreSQL in our user account or to 
@@ -28,7 +28,7 @@ export BENCH_USERNAME = $(USER)
 # Do not touch anything after this point.
 # ---------------------------------------------------------------------
 
-EXECS = bench clien tm check vacuum
+EXECS = bench bench_srv clien tm check vacuum
 
 all: Makefile 
 	cd include; ./configure-variables $(VARDIR) $(EXECDIR) 
@@ -43,6 +43,7 @@ install: all
 uninstall:
 	rm -rf $(EXECDIR)check $(EXECDIR)tm $(EXECDIR)/clien 
 	rm -rf $(EXECDIR)bench $(EXECDIR)vacuum $(VARDIR) 
+	rm -rf $(EXECDIR)bench_srv
 
 clean:
 	rm -f include/tpcc.h
