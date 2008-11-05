@@ -3,10 +3,10 @@ from socket import SocketType
 from time import sleep
 import socket, sys
 from connection import connection
-from threading import Thread
+from threading import Thread, Lock
 from Queue import Queue
 
-def DatabaseStatusError(RuntimeError):
+class DatabaseStatusError(RuntimeError):
   pass
 
 # Obtaining test parameters
@@ -211,22 +211,31 @@ def read_config():
 
 class server(Thread):
   def __init__(self, addr, id):
+    self.__lock = Lock()
     self.sock = SocketType()
     self.addr = addr
     self.connected = False
     self.id = id
+    self.ans_queue = Queue()
 
-  def execute(self, cmd, data, show_output):
+    # Says if we should print output of execute command on the screen
+    self.show_output = True
+
+    # Says if we have to put the answer of execute command in self.ans_queue
+    self.return_output = False
+
+    Thread.__init__(self)
+
+  # TODO: fix mutex
+  def execute(self, cmd, data, show_output, return_output):
+    self.__lock.acquire()
+    self.show_output = show_output
+    self.return_output = return_output
     msg = str((cmd,) + data)
     self.conn.send(msg)
 
-    tmp = self.conn.recv_part()
-    buffer = ""
-    while tmp != "":
-      if show_output: print tmp[:-1]
-      buffer += tmp
-      tmp = self.conn.recv_part()
-
+  def get_answer(self):
+    buffer = self.ans_queue.get()
     return buffer
 
   def connect(self):
@@ -235,17 +244,31 @@ class server(Thread):
       self.conn = connection(self.sock)
       print "Connected to %s:%d." % self.addr
       self.connected = True
+      self.start()
     except:
       print "Couldn't connect to %s:%d." % self.addr
 
   def disconnect(self):
     self.sock.shutdown(socket.SHUT_RDWR)
     self.sock.close()
+    self.__lock.acquire()
     self.connected = False
+
+  # TODO: fix mutex
+  def run(self):
+    while self.connected:
+      tmp = self.conn.recv_part()
+      buffer = ""
+      while tmp != "":
+        if self.show_output: print tmp[:-1]
+        if self.return_output: buffer += tmp
+        tmp = self.conn.recv_part()
+
+      if self.return_output: self.ans_queue.put(buffer)
+      self.__lock.release()
 
 class server_grp:
   def __init__(self, nodes):
-    Thread.__init__(self)
     self.nodes = nodes
     self.servers = []
     id = 0
@@ -253,7 +276,6 @@ class server_grp:
       self.servers.append(server(node, id))
       id += 1
 
-    self.__queue = Queue()
 
   def connect(self):
     success = True
@@ -269,13 +291,19 @@ class server_grp:
       if s.connected:
         s.disconnect()
   
-  def execute_all(self, cmd, data=(), show_output=False):
+  def execute_all(self, cmd, data=(), show_output=False, return_output=True):
     ret = []
 
     for s in self.servers:
-      if s.connected: ret.append(s.execute(cmd, data, show_output))
+      if s.connected:
+        s.execute(cmd, data, show_output, return_output)
 
-    return ret
+    for s in self.servers:
+      if s.connected and return_output:
+        tmp = s.get_answer()
+	ret.append(tmp)
+
+    if return_output: return ret
 
   def __len__(self):
     return len(self.servers)
@@ -299,8 +327,11 @@ while not servers.connect():
 NUM_MAX_ALM = 10
 has_db = 1
 has_logs = 1
+show_output = False
 if len(servers) == 1:
   print "Running in special mode."
+  show_output = True
+
 check_data(servers)
 
 #(has_db, has_logs) = check_data()
@@ -311,34 +342,36 @@ while(cmd != 8):
     params = createdb_menu(NUM_MAX_ALM)
     if params != () and (params[0] == 'y' or params[0] == 'Y'):
       # Connect to server and make them to create the database
-      servers.execute_all(cmd, params, True)
+      run = true
 
   elif cmd == 2:
     params = restore_menu()
-    if params != (): servers.execute_all(cmd, params, True)
+    if params != (): run = true
 
   elif cmd == 3:
     params = runtest_menu(NUM_MAX_ALM)
-    if params != (): servers.execute_all(cmd, params, True)
+    if params != (): run = True
 
   elif cmd == 4:
     params = consistency_menu()
-    if params != (): servers.execute_all(cmd, params, True)
+    if params != (): run = True
 
   elif cmd == 5:
     params = delete_menu()
-    if params != (): servers.execute_all(cmd, params, True)
+    if params != (): run = True
 
   elif cmd == 6:
     params = result_menu()
-    if params != (): servers.execute_all(cmd, params, True)
+    if params != (): run = True
 
   elif cmd == 7:
     # Just run without asking anything
-    servers.execute_all(cmd, (), True)
+    params = ()
+    run = True
 
-  if len(servers) == 1:
-    (has_db, has_logs) = check_data(servers)
+  if run: servers.execute_all(cmd, params, show_output, False)
+
+  (has_db, has_logs) = check_data(servers)
   cmd = main_menu(has_db, has_logs)
 
 servers.disconnect()
