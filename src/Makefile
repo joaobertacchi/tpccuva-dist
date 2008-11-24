@@ -73,7 +73,7 @@ extra.o: extra.c ../include/tpcc.h
 # Clean ----------------------------------------------------------------------
 
 clean:
-	- rm -rf *.o tt.c
+	- rm -rf *.o tt.c tt_srv.c
 	- rm -rf $(EXECS)
 	- cd ../bin; rm -rf $(EXECS)
 
