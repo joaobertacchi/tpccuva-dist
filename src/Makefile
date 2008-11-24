@@ -29,9 +29,9 @@ bench_srv: bench_srv.o
 	gcc -o bench_srv bench_srv.o extra.o -lm -I $(INCLUDEPATH) -L $(LIBSPATH) $(CLIBS)
 
 bench_srv.o: bench_srv.c ../include/tpcc.h
-	ecpg bench_srv.c -o tt_srv.c -D USERNAME=$(BENCH_USERNAME)
-	gcc -c -g tt_srv.c -I $(INCLUDEPATH) -L $(LIBSPATH)
-	mv tt_srv.o bench_srv.o
+	ecpg bench_srv.c -o tt.c -D USERNAME=$(BENCH_USERNAME)
+	gcc -c -g tt.c -I $(INCLUDEPATH) -L $(LIBSPATH)
+	mv tt.o bench_srv.o
 
 # Building the benchmark main program ----------------------------------------
 
@@ -73,7 +73,7 @@ extra.o: extra.c ../include/tpcc.h
 # Clean ----------------------------------------------------------------------
 
 clean:
-	- rm -rf *.o tt.c tt_srv.c
+	- rm -rf *.o tt.c
 	- rm -rf $(EXECS)
 	- cd ../bin; rm -rf $(EXECS)
 
