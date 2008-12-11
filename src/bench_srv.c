@@ -117,7 +117,7 @@ struct timeb sellohora1, sellohora2; /* Auxiliar timestamps.        */
 /********************************************************************/
 
 
-int lanzador(int w, int term){
+int lanzador(int w, int term, int srv_id){
 /* ---------------------------------------------- *\
 |* Lanzador function.                             *|
 |* ---------------------------------------------- *|
@@ -140,6 +140,15 @@ char *param[8]; /* Vector of parameters for the function execve */
 char men0[8], men1[3], men2[3], men3[3], men4[3], men5[3]; /* Parameters for the function execve */
 int llave = 10; /* Key, passed to the clients, for the memory and semaphores management. */
 int i= 0, d = 1;
+const int n_chars_sid = 4;
+char s_srv_id[n_chars_sid]; /* Max of 1000 srv_ids (000 - 999) */
+
+	sprintf(s_srv_id, "%d", srv_id);
+
+	if (srv_id > (int)powf((float)10, (float)(n_chars_sid - 1) - 1) ){
+		fprintf(stdout, "\n\nsrv_id invalid! Continuing anyway...\n\n\n");
+		sleep(1);
+	}
 
 	/* Allocating memory for the TM PID */
 	if ((pidtm = (pid_t *)malloc(sizeof(pid_t))) == NULL){
@@ -159,10 +168,14 @@ int i= 0, d = 1;
 	if ((*pidtm = fork()) == 0){
 		/* Hijo */
 		strcpy(filenameBuffer,EXECDIR);
-		strcat(filenameBuffer,"tm");
+		strcat(filenameBuffer,"tm_srv");
 		// debug
 		fprintf(stdout,"Command: ++%s++\n",filenameBuffer);
-		if (execve(filenameBuffer, NULL,environ)){
+		sprintf(men0, "tm_srv\0");     /* Name of the program.                      */
+		param[0] = men0;
+		param[1] = s_srv_id;
+		param[2] = NULL;
+		if (execve(filenameBuffer, param, environ)){
 			fprintf(stderr, "bench: Error launching the Transaction Monitor\n");
 			return(-1);
 		} /* if */ 
@@ -172,12 +185,12 @@ int i= 0, d = 1;
 
 	/* Launching the terminals */
 	fprintf(stdout, "Launching terminals...");
-	for (i = 0; i<w; i++)
+	for (i = 0; i<w; i++){
 		// diego: Instead of a single key equal to 10 for everyone, 
 		// we will use one different key per set of TERM terminals. 
 		// llave = i;
 		// diego: End of change.
-			
+		
 		for (d = 1; d <= term; d ++){
 			if ((pidterm[i*10+d-1] = fork()) == 0){
 				/* Child */
@@ -195,7 +208,8 @@ int i= 0, d = 1;
 				param[3]=men3;
 				param[4]=men4;
 				param[5]=men5;
-				param[6]=NULL;
+				param[6]=s_srv_id;
+				param[7]=NULL;
 				strcpy(filenameBuffer,EXECDIR);
 				strcat(filenameBuffer,"clien");
 				fprintf(stdout,"Command: ++%s++\n",filenameBuffer);
@@ -206,7 +220,8 @@ int i= 0, d = 1;
 				sleep(1);
 			}
 		}
-		/* The code bellow is not executed by the child process.       */
+	}
+	/* The code bellow is not executed by the child process.       */
 	fprintf(stdout, " OK\n");
 return 0;
 } /* lanzador */
@@ -4186,6 +4201,8 @@ char dec_vacuum,dec_n_vacuum;
 int  int_vacuum, num_vacuum, vacuum;   /* Variables for configuring the vacuums  */ 
 char fecha[21];                        /* system date string */
 
+int srv_id;
+
 /* Signals handling functions */
 void signal_usr1();                  
 void signal_int1();
@@ -4207,6 +4224,7 @@ salir = 0;
 		switch (command){
                         case 1: /* Creating the database */
 				w = atoi(argv[3]);
+				srv_id = atoi(argv[4]);
 
                                 /* catching signal SIGUSR1 */
                                 if (signal(SIGUSR1, signal_usr1) == SIG_ERR){
@@ -4251,6 +4269,7 @@ salir = 0;
                                 break;
 
                 case 2: /* Restoring the database */
+			srv_id = atoi(argv[3]);
 
                         /* Checking database */
                         fprintf(stdout, "Checking database...\n");
@@ -4327,14 +4346,15 @@ strcat(filenameBuffer,"cons.dat");
 				exit(-1);
 			}  
  
-			w = atoi(argv[2]);
-			term = atoi(argv[3]);
-			int_ramp = atoi(argv[4]);
-			int_med = atoi(argv[5]);
-			vacuum = atoi(argv[6]);
-			dec_vacuum = argv[7][0];
-			int_vacuum = atoi(argv[8]);
-			num_vacuum = atoi(argv[9]);
+			w = atoi(argv[3]);
+			term = atoi(argv[4]);
+			int_ramp = atoi(argv[5]);
+			int_med = atoi(argv[6]);
+			vacuum = atoi(argv[7]);
+			dec_vacuum = argv[8][0];
+			int_vacuum = atoi(argv[9]);
+			num_vacuum = atoi(argv[10]);
+			srv_id = atoi(argv[11]);
 
 			fprintf(stdout, "Checking the database...\n");
 			fflush(stdout);
@@ -4373,7 +4393,7 @@ strcat(filenameBuffer,"medida.log");
 
 			/* Launching terminals and TM */
 			terminado = 0;
-			if (lanzador(w, term) != 0){
+			if (lanzador(w, term, srv_id) != 0){
 				fprintf(stdout, "\nError: launching terminales and TM\n");
 				break;
 			} 
@@ -4386,7 +4406,8 @@ strcat(filenameBuffer,"medida.log");
 				timeout = 0;
 				alarm(int_ramp);
 			}
-			while ((!timeout) && (!terminado)); 
+			while ((!timeout) && (!terminado))
+				sleep(1); 
 
 			/* At this point ramp-up period has expired */
 			/* Launching checkponts controller */
@@ -4403,7 +4424,8 @@ strcat(filenameBuffer,"medida.log");
 
 			alarm(int_med);
 			/* waiting measurement interval */
-			while ((!timeout) && (!terminado));
+			while ((!timeout) && (!terminado))
+				sleep(1);
 
 			/* At this point measurement interval has expired */
 			/* Record the measurement interval end */
@@ -4507,6 +4529,7 @@ strcat(filenameBuffer,"medida.log");
 			break;
 
                 case 4: /*checking consistency*/
+			srv_id = atoi(argv[3]);
 
                         /* Catching signal SIGINT */
                         if (signal(SIGINT, signal_int2) == SIG_ERR){
@@ -4519,6 +4542,8 @@ strcat(filenameBuffer,"medida.log");
                         break;
 
                 case 5: /*delete database*/
+			srv_id = atoi(argv[3]);
+
                         /* Catching signal SIGINT */
                         if (signal(SIGINT, signal_int2) == SIG_ERR){
                                 fprintf(stdout, "Error catching signal sigint. \n");
@@ -4544,6 +4569,7 @@ strcat(filenameBuffer,"medida.log");
                         break;
 
                 case 6: /* Show results */
+			srv_id = atoi(argv[4]);
 
                         /* Catching signal SIGINT */
                         if (signal(SIGINT, signal_int2) == SIG_ERR){
@@ -4556,6 +4582,7 @@ strcat(filenameBuffer,"medida.log");
                         break;
 
                 case 7: /*checking the database state */
+			srv_id = atoi(argv[2]);
 
                         /* Catching sinal sigint */
                         if (signal(SIGINT, signal_int2) == SIG_ERR){
@@ -4568,6 +4595,8 @@ strcat(filenameBuffer,"medida.log");
                         break;
 		
 		case 10:/*checking if the log files exists -- has_logs */
+			srv_id = atoi(argv[2]);
+
 			strcpy(filenameBuffer,VARDIR);
 			strcat(filenameBuffer,"medida.log");
                 	haylogs=hay_fich(filenameBuffer);
@@ -4575,6 +4604,8 @@ strcat(filenameBuffer,"medida.log");
 			break;
 
 		case 11:/* has_db */
+			srv_id = atoi(argv[2]);
+
 			/*  Connecting with template1 */
         		EXEC SQL CONNECT TO template1;/* USER USERNAME;*/
         		if (sqlca.sqlcode<0){

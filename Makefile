@@ -28,7 +28,7 @@ export BENCH_USERNAME = $(USER)
 # Do not touch anything after this point.
 # ---------------------------------------------------------------------
 
-EXECS = bench bench_srv clien tm check vacuum
+EXECS = bench_srv clien tm_srv check vacuum
 
 all: Makefile 
 	cd include; ./configure-variables $(VARDIR) $(EXECDIR) 

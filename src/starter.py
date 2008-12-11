@@ -109,8 +109,10 @@ def check_data(servers):
   msg_list = servers.execute_all(10)
   #print msg_list
   try:
-    for msg in msg_list[1:]:
-      if msg != msg_list[0]: raise DatabaseStatusError
+    if len(msg_list) > 1:
+      for msg in msg_list[1:]:
+        if msg != msg_list[0]: raise DatabaseStatusError
+    else: msg = msg_list[0]
 
     has_logs = int(msg)
   except RuntimeError:
@@ -123,8 +125,10 @@ def check_data(servers):
   msg_list = servers.execute_all(11)
   #print msg_list
   try:
-    for msg in msg_list[1:]:
-      if msg != msg_list[0]: raise DatabaseStatusError
+    if len(msg_list) > 1:
+      for msg in msg_list[1:]:
+        if msg != msg_list[0]: raise DatabaseStatusError
+    else: msg = msg_list[0]
  
     has_db = int(msg)
   except RuntimeError:
@@ -198,6 +202,9 @@ def send_command(data_str, sock):
   if data_size > 999: raise Exception
   sock.sendall("%3d" % data_size + data_str)
 
+# Returns a list of tuples.
+# Comments in config file are ignored.
+# [("<ip_addr>", <port_num>), ...]
 def read_config():
   nodes = []
   config_file = open("nodes.conf", "r")
@@ -218,10 +225,10 @@ class server(Thread):
     self.id = id
     self.ans_queue = Queue()
 
-    # Says if we should print output of execute command on the screen
+    # Says if we should print output of executed command on the screen
     self.show_output = True
 
-    # Says if we have to put the answer of execute command in self.ans_queue
+    # Says if we have to put the answer of executed command in self.ans_queue
     self.return_output = False
 
     Thread.__init__(self)
@@ -231,7 +238,8 @@ class server(Thread):
     self.__lock.acquire()
     self.show_output = show_output
     self.return_output = return_output
-    msg = str((cmd,) + data)
+    #msg = str((cmd,) + data)
+    msg = str((cmd,) + data + (self.id,)) # Append server id in the end
     self.conn.send(msg)
 
   def get_answer(self):
@@ -269,8 +277,8 @@ class server(Thread):
 
 class server_grp:
   def __init__(self, nodes):
-    self.nodes = nodes
-    self.servers = []
+    self.nodes = nodes # List of addresses tuples
+    self.servers = [] # List of server objects
     id = 0
     for node in nodes:
       self.servers.append(server(node, id))
@@ -332,21 +340,33 @@ if len(servers) == 1:
   print "Running in special mode."
   show_output = True
 
-check_data(servers)
+#check_data(servers)
 
-#(has_db, has_logs) = check_data()
+(has_db, has_logs) = check_data(servers)
 
 cmd = main_menu(has_db, has_logs)
+# *** Parameters passed ***
+#  1: (ch,w)
+#  2: (ch,)
+#  3: (ch, w, term, int_ramp, int_med, vacuum, dec_vacuum, int_vacuum, num_vacuum)
+#  4: (ch,)
+#  5: (ch,)
+#  6: (ch, name)
+#  7: ()
+# 10: ()
+# 11: ()
+# ############################
 while(cmd != 8):
+  run = False
   if cmd == 1:
     params = createdb_menu(NUM_MAX_ALM)
     if params != () and (params[0] == 'y' or params[0] == 'Y'):
       # Connect to server and make them to create the database
-      run = true
+      run = True
 
   elif cmd == 2:
     params = restore_menu()
-    if params != (): run = true
+    if params != (): run = True
 
   elif cmd == 3:
     params = runtest_menu(NUM_MAX_ALM)

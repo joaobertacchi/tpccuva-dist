@@ -128,7 +128,8 @@ main ()
        alarm (INT_CHECKPOINT);
        alarma = 0;
        /* Waiting checkpoint interval */
-       while (!alarma && no_term);
+       while (!alarma && no_term)
+       	sleep(1);
 
      }				/* While */
 

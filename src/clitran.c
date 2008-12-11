@@ -58,16 +58,16 @@
 |* Constants declaration                                            *|
 \* ---------------------------------------------------------------- */
 /*                      Messages                                    */
-#define MSGTRM 2		/*identificador de mensaje de trminal       */
-#define CONECTAR 0		/*Connection terminal message identificator */
-#define DESCONECTAR 1		/*Disconnection terminal message            */
+//#define MSGTRM 2		/*identificador de mensaje de trminal       */
+//#define CONECTAR 0		/*Connection terminal message identificator */
+//#define DESCONECTAR 1		/*Disconnection terminal message            */
 			/*Identificator                             */
-#define NEW_ORDER 3		/*New-Order Transaction indentificator      */
-#define PAYMENT 4		/*Payment Transaction identificator         */
-#define ORDER_STATUS 5		/*Order-Status Transaction identificator    */
-#define DELIVERY 6		/*Delivery transaction identificator        */
-#define STOCK_LEVEL 7		/*Stock-Level transaction identificator     */
-#define LLAVE_COLA 5		/*Key for the message queue                 */
+//#define NEW_ORDER 3		/*New-Order Transaction indentificator      */
+//#define PAYMENT 4		/*Payment Transaction identificator         */
+//#define ORDER_STATUS 5		/*Order-Status Transaction identificator    */
+//#define DELIVERY 6		/*Delivery transaction identificator        */
+//#define STOCK_LEVEL 7		/*Stock-Level transaction identificator     */
+//#define LLAVE_COLA 5		/*Key for the message queue                 */
 /********************************************************************/
 
 /*               Constants for the  vectores de estado                   */
@@ -1280,6 +1280,7 @@ main (int argc, char *argv[])
 |* Argumento 3= distrito del ETR                  *|
 |* Argumento 4= número total de almacenes         *|
 |* Argumento 5= modo de ejecución:                *|
+|* Argumento 6= server id                         *|
 |* salida por pantalla o a /dev/null              *|
 \* ---------------------------------------------- */
 
@@ -1308,8 +1309,10 @@ main (int argc, char *argv[])
     ushort *array;
   } semun_arg;
 
+  int srv_id;
+
 /*Se comprueba que se han pasado correctamente los parámetros al programa*/
-  if (argc != 6)
+  if (argc != 7)
      {
        leyenda ();		/*Se avisa mediante la función leyenda si se ha pasado */
        /* un número incorrecto de parámetros */
@@ -1330,6 +1333,7 @@ main (int argc, char *argv[])
   w_id = atoi (argv[2]);	/*asignamos un almacén al terminal */
   d_id = atoi (argv[3]);	/*asignamos un distrito al terminal */
   llave = LLAVE_COLA;		/*llave de la cola TODOS LOS CLIENTES COMPARTEN LA MISMA LLAVE */
+  srv_id = atoi(argv[6]);
 
 
 /*Se activan las funciones de tratamiento de las señales SIGTERM y SIGINT*/
@@ -1577,13 +1581,13 @@ main (int argc, char *argv[])
 		sellohora.millitm);
 
        /*Se discrimina el tipo de transacción a ejecutar                            */
+       men.tipo = tipo;    /*Tipo de transección que enviamos */
+       men.id = cod_term;  /*Idenentificador de terminal */
+       men.srv_id = srv_id; /* Server/warehouse identifier */
        switch (tipo)
 	  {
 	    /*Dependiendo del tipo de transaccion hacemos lo que corresponda */
 	  case NEW_ORDER:		/********TRANSACCION NEW ORDER*********/
-	    men.tipo = tipo;	/*Tipo de transección que enviamos */
-	    men.id = cod_term;	/*Idenentificador de terminal */
-
 	    /*patalla de introducción de datos */
 	    pant_new_order_pet ();
 
@@ -1637,9 +1641,6 @@ main (int argc, char *argv[])
 	    break;
 
 	  case PAYMENT:	/********TRANSACCION PAYMENT*********/
-	    men.tipo = tipo;	/*Tipo de transacción que enviamos */
-	    men.id = cod_term;	/*Idenentificador de terminal */
-
 	    /*patalla de introducción de datos */
 	    pant_payment_pet ();
 
@@ -1682,10 +1683,6 @@ main (int argc, char *argv[])
 	    break;
 
 	  case ORDER_STATUS:		/********TRANSACCION ORDER_STATUS*********/
-	    men.tipo = tipo;	/*Tipo de transección que enviamos */
-	    men.id = cod_term;	/*Idenentificador de terminal */
-
-
 	    /*Pantalla de introducción de datos */
 	    pant_ostatus_pet ();
 	    /*GENERACIÓN DE DATOS DE TRANSACCIÓN */
@@ -1728,10 +1725,6 @@ main (int argc, char *argv[])
 	    break;
 
 	  case DELIVERY:		  /********TRANSACCION DELIVERY*********/
-	    men.tipo = tipo;	/*Tipo de transección que enviamos */
-	    men.id = cod_term;	/*Idenentificador de terminal */
-
-
 	    /*Pantalla de introducción de datos */
 	    pant_delivery_pet ();
 	    /*GENERACIÓN DE DATOS DE TRANSACCIÓN */
@@ -1770,10 +1763,6 @@ main (int argc, char *argv[])
 	    break;
 
 	  case STOCK_LEVEL:			/********TRANSACCION STOCK_LEVEL*********/
-	    men.tipo = tipo;	/*Tipo de transección que enviamos */
-	    men.id = cod_term;	/*Idenentificador de terminal */
-
-
 	    /*Pantalla de introducción de datos */
 	    pant_stock_level_pet ();
 	    /*GENERACIÓN DE DATOS DE TRANSACCIÓN */

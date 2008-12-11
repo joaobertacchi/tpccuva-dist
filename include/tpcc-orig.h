@@ -67,6 +67,17 @@ char filenameBuffer[200];
 #define TR90thD 5    /* DELIVERY transaction */
 #define TR90thSL 20  /* STOCK_LEVEL transaction */
 
+/* MESSAGE TYPES                                                      */
+#define CONECTAR 0      /* operacion del mensaje de terminal          */
+#define DESCONECTAR 1   /* operacion del mensaje de terminal          */
+#define MSGTRM 2        /* mensaje de terminal                        */
+#define NEW_ORDER 3     /* identificador transaccion new_order        */
+#define PAYMENT 4       /* identificador transaccion payment          */
+#define ORDER_STATUS 5  /* identificador transaccion order_status     */
+#define DELIVERY 6      /* identificador transaccion delivery         */
+#define STOCK_LEVEL 7   /* identificador transaccion stock_level      */
+
+#define LLAVE_COLA 5    /* llave IPC de la cola de mensajes           */
 
 /******** Checkpoint interval in seconds ********/
 #define INT_CHECKPOINT 30*60 
@@ -136,6 +147,7 @@ struct tdelivery_men {
 struct mensaje{ 
 		int tipo;  /*TIPO DE MENSAJE */
   	        int id;     /*IDENTIFICADOR DE CLIENTE*/
+		int srv_id; /*Server id of server connected to the message sender client */
 
                 /*TIPOS DE MENSAJES:*/
 		union ttran{	
