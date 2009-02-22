@@ -1,13 +1,23 @@
 #!/usr/bin/python
 from socket import SocketType
 from time import sleep
-import socket, sys
-from connection import connection
+import socket, sys, signal, os
+from connection import connection, ConnectionClosedException
 from threading import Thread, Lock
 from Queue import Queue
 
 class DatabaseStatusError(RuntimeError):
   pass
+
+def get_raw_input(message):
+  ans = None
+  while ans == None:
+    try:
+      ans = raw_input(message)
+    except EOFError:
+      ans = None
+
+  return ans
 
 # Obtaining test parameters
 def runtest_menu(NUM_MAX_ALM):
@@ -121,6 +131,9 @@ def check_data(servers):
   except DatabaseStatusError:
     print "Log files are different: %s" % msg_list
     sys.exit(-1)
+  except ValueError:
+    print "Datatabase unreachable! Is it started?"
+    sys.exit(-1)
 
   msg_list = servers.execute_all(11)
   #print msg_list
@@ -136,6 +149,9 @@ def check_data(servers):
     sys.exit(-1)
   except DatabaseStatusError:
     print "Some servers doesn't have a database: %s" % msg_list
+    sys.exit(-1)
+  except ValueError:
+    print "Datatabase unreachable! Is it started?"
     sys.exit(-1)
 
   return (has_db, has_logs)
@@ -182,7 +198,10 @@ def main_menu(has_bd, has_logs):
 	print "\n\n	8.- Quit\n\n\n\n\n"
 	print "* - Not working"
 	while True:
-		option = raw_input("SELECT OPTION: ")
+		try:
+			option = get_raw_input("SELECT OPTION: ")
+		except EOFError:
+			option = None
 		
 		if option.isdigit():
 			option = int(option)
@@ -239,7 +258,7 @@ class server(Thread):
     self.show_output = show_output
     self.return_output = return_output
     #msg = str((cmd,) + data)
-    msg = str((cmd,) + data + (self.id,)) # Append server id in the end
+    msg = str((self.return_output, cmd) + data + (self.id,)) # Append server id in the end
     self.conn.send(msg)
 
   def get_answer(self):
@@ -264,16 +283,21 @@ class server(Thread):
 
   # TODO: fix mutex
   def run(self):
-    while self.connected:
-      tmp = self.conn.recv_part()
-      buffer = ""
-      while tmp != "":
-        if self.show_output: print tmp[:-1]
-        if self.return_output: buffer += tmp
+    try:
+      while self.connected:
         tmp = self.conn.recv_part()
+        buffer = ""
+        while tmp != "":
+          if self.show_output: print tmp[:-1]
+          if self.return_output: buffer += tmp
+          tmp = self.conn.recv_part()
 
-      if self.return_output: self.ans_queue.put(buffer)
-      self.__lock.release()
+        if self.return_output: self.ans_queue.put(buffer)
+        self.__lock.release()
+    except ConnectionClosedException:
+      print "\nConnection closed by server. Shuting down connection %d %s..." % (self.id, self.addr)
+      self.disconnect()
+      os.kill(os.getpid(), signal.SIGUSR1)
 
 class server_grp:
   def __init__(self, nodes):
@@ -300,51 +324,66 @@ class server_grp:
         s.disconnect()
   
   def execute_all(self, cmd, data=(), show_output=False, return_output=True):
+    executed = False
     ret = []
 
     for s in self.servers:
       if s.connected:
         s.execute(cmd, data, show_output, return_output)
+	executed = True
+	print "Executing command in server %d" % s.id
+
+    # If no server have executed the command, let's finish the program.
+    if not executed: sys.exit(0)
 
     for s in self.servers:
       if s.connected and return_output:
         tmp = s.get_answer()
 	ret.append(tmp)
 
-    if return_output: return ret
+    if return_output:
+      return ret
 
   def __len__(self):
     return len(self.servers)
+
+def connection_closed(signum, frame):
+  some_connected = False
+  for s in servers.servers:
+    if s.connected == True:
+      some_connected = True
+      break
+  if not some_connected:
+    print "There is no server available anymore. Exiting..."
+    servers.disconnect()
+    sys.exit(0)
+
 
 try:
   nodes = read_config()
 except IOError:
   print "Problem reading config file: nodes.conf"
-  nodes = []
+  sys.exit(-1)
 
 servers = server_grp(nodes)
 tries = 1
-while not servers.connect():
-  if tries > 3:
-    print "It's not possible to connect to all the servers.\nExiting."
-    raise RuntimeException
-  sleep(3)
-  tries += 1
+signal.signal(signal.SIGUSR1, connection_closed)
+try:
+  while not servers.connect():
+    if tries > 3:
+      print "It's not possible to connect to all the servers.\nExiting."
+      raise RuntimeException
+    sleep(3)
+    tries += 1
 
 
-NUM_MAX_ALM = 10
-has_db = 1
-has_logs = 1
-show_output = False
-if len(servers) == 1:
-  print "Running in special mode."
-  show_output = True
+  NUM_MAX_ALM = 10
+  has_db = 1
+  has_logs = 1
 
-#check_data(servers)
+  (has_db, has_logs) = check_data(servers)
 
-(has_db, has_logs) = check_data(servers)
-
-cmd = main_menu(has_db, has_logs)
+  cmd = main_menu(has_db, has_logs)
 # *** Parameters passed ***
 #  1: (ch,w)
 #  2: (ch,)
@@ -356,42 +395,49 @@ cmd = main_menu(has_db, has_logs)
 # 10: ()
 # 11: ()
 # ############################
-while(cmd != 8):
-  run = False
-  if cmd == 1:
-    params = createdb_menu(NUM_MAX_ALM)
-    if params != () and (params[0] == 'y' or params[0] == 'Y'):
-      # Connect to server and make them to create the database
+  while(cmd != 8):
+    run = False
+    if cmd == 1:
+      params = createdb_menu(NUM_MAX_ALM)
+      if params != () and (params[0] == 'y' or params[0] == 'Y'):
+        # Connect to server and make them to create the database
+        run = True
+
+    elif cmd == 2:
+      params = restore_menu()
+      if params != (): run = True
+
+    elif cmd == 3:
+      params = runtest_menu(NUM_MAX_ALM)
+      if params != ():
+        run = True
+        if params[1] > len(servers):
+          print "\nNumber of warehouses (%d) bigger than servers available (%d)!\nABORTING!!!\n\n" % (params[1], len(servers))
+          run = False
+  
+    elif cmd == 4:
+      params = consistency_menu()
+      if params != (): run = True
+  
+    elif cmd == 5:
+      params = delete_menu()
+      if params != (): run = True
+
+    elif cmd == 6:
+      params = result_menu()
+      if params != (): run = True
+  
+    elif cmd == 7:
+      # Just run without asking anything
+      params = ()
       run = True
+  
+    if run: servers.execute_all(cmd, params, False, False)
+  
+    (has_db, has_logs) = check_data(servers)
+    cmd = main_menu(has_db, has_logs)
 
-  elif cmd == 2:
-    params = restore_menu()
-    if params != (): run = True
-
-  elif cmd == 3:
-    params = runtest_menu(NUM_MAX_ALM)
-    if params != (): run = True
-
-  elif cmd == 4:
-    params = consistency_menu()
-    if params != (): run = True
-
-  elif cmd == 5:
-    params = delete_menu()
-    if params != (): run = True
-
-  elif cmd == 6:
-    params = result_menu()
-    if params != (): run = True
-
-  elif cmd == 7:
-    # Just run without asking anything
-    params = ()
-    run = True
-
-  if run: servers.execute_all(cmd, params, show_output, False)
-
-  (has_db, has_logs) = check_data(servers)
-  cmd = main_menu(has_db, has_logs)
+except ConnectionClosedException:
+  pass
 
 servers.disconnect()

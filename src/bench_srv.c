@@ -185,7 +185,8 @@ char s_srv_id[n_chars_sid]; /* Max of 1000 srv_ids (000 - 999) */
 
 	/* Launching the terminals */
 	fprintf(stdout, "Launching terminals...");
-	for (i = 0; i<w; i++){
+	//for (i = 0; i<w; i++){
+	for (i = 0; i<1; i++){ /* Create just one warehouse in this server */
 		// diego: Instead of a single key equal to 10 for everyone, 
 		// we will use one different key per set of TERM terminals. 
 		// llave = i;

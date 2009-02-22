@@ -1,3 +1,6 @@
+class ConnectionClosedException(Exception):
+  pass
+
 class connection:
   def __init__(self, sock):
     self.sock = sock
@@ -7,6 +10,7 @@ class connection:
     header = self.sock.recv(self.header_size)
     while len(header) > 0 and len(header) < self.header_size:
         header += self.sock.recv(self.header_size - len(header))
+    if len(header) == 0: raise ConnectionClosedException
     return header
 
   def __recv_msg(self, msg_size):
@@ -25,8 +29,10 @@ class connection:
     msg = ""
     header = self.__recv_header()
 
-    if len(header) == 0: msg_size = 0
-    else: msg_size = int(header)
+    ##if len(header) == 0: msg_size = 0
+    #if len(header) == 0: raise ConnectionClosedException
+    ##else: msg_size = int(header)
+    msg_size = int(header)
 
     while msg_size > 0:
       msg += self.__recv_msg(msg_size)
@@ -46,9 +52,9 @@ class connection:
     return self.__recv_msg(msg_size)
 
   def send(self, msg):
-    msg_full = "%32d" % len(msg)
+    msg_full = "%32d" % len(msg) # Header: size of message
     msg_full += msg
-    msg_full += "%32d" % 0
+    msg_full += "%32d" % 0 # Footer: start an empty message that means end of message
     self.sock.sendall(msg_full)
 
   def send_part(self, msg):
