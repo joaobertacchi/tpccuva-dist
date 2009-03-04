@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from SocketServer import ThreadingTCPServer, BaseRequestHandler
 from connection import connection, ConnectionClosedException
-import socket, os, subprocess
+import socket, os, subprocess, sys
 
 class Handler(BaseRequestHandler):
   def setup(self):
@@ -9,9 +9,10 @@ class Handler(BaseRequestHandler):
 
   def handle(self):
     conn = connection(self.request)
-    msg = conn.recv()
 
     try:
+      msg = conn.recv()
+
       while len(msg) > 0:
         data_t = eval(msg)
         command = "./bench_srv"
@@ -59,7 +60,7 @@ def getMyIP():
     return hostaddr
 
 
-server_addr = (getMyIP(), 10201)
+server_addr = (getMyIP(), int(sys.argv[1])) # The first parameter is the port
 print "Listening to connections on " + str(server_addr) + " address."
 s = ThreadingTCPServer(server_addr, Handler)
 try:

@@ -1,12 +1,12 @@
 #!/usr/bin/python
 from socket import SocketType
 from time import sleep
-import socket, sys, signal, os
+import socket, sys, signal, os, exceptions
 from connection import connection, ConnectionClosedException
 from threading import Thread, Lock
 from Queue import Queue
 
-class DatabaseStatusError(RuntimeError):
+class DatabaseStatusError(exceptions.RuntimeError):
   pass
 
 def get_raw_input(message):
@@ -19,15 +19,25 @@ def get_raw_input(message):
 
   return ans
 
+def get_input(message):
+  ans = None
+  while ans == None:
+    try:
+      ans = input(message)
+    except EOFError:
+      ans = None
+
+  return ans
+
 # Obtaining test parameters
 def runtest_menu(NUM_MAX_ALM):
   ch = 'n'
   while (ch == 'n'):
-    w = input("->Enter number of warehouses ")
-    term = input("->Enter number of terminals per warehouse (max. 10) ")
-    int_ramp = input("->Enter ramp-up period (minutes) ")
+    w = get_input("->Enter number of warehouses ")
+    term = get_input("->Enter number of terminals per warehouse (max. 10) ")
+    int_ramp = get_input("->Enter ramp-up period (minutes) ")
     int_ramp *= 60
-    int_med = input("->Enter measurement interval (minutes) ")
+    int_med = get_input("->Enter measurement interval (minutes) ")
     int_med *= 60
     
     # Checking entered data
@@ -38,24 +48,24 @@ def runtest_menu(NUM_MAX_ALM):
       ch = 'y'
 
   # Asking for continue
-  ch = raw_input("Continue? (y/n): ")
+  ch = get_raw_input("Continue? (y/n): ")
   if ((ch != 'y') and (ch != 'Y')): return ()
 
   # Vacuums controller configuration
   vacuum=0
-  dec_vacuum = raw_input("->Do you want to perform vacuums during the test? (y/n): ")
+  dec_vacuum = get_raw_input("->Do you want to perform vacuums during the test? (y/n): ")
 
   if (dec_vacuum=='Y' or dec_vacuum=='y'):
     int_vacuum = 0
     while (int_vacuum <= 0):
-      int_vacuum = input("        ->Enter interval between vacuums (minutes): ")
+      int_vacuum = get_input("        ->Enter interval between vacuums (minutes): ")
       if (int_vacuum <= 0): print "             ->Interval not valid."
 
-    dec_n_vacuum = raw_input("->Do you want to specify the maximum number of vacuums? (y/n): ")
+    dec_n_vacuum = get_raw_input("->Do you want to specify the maximum number of vacuums? (y/n): ")
     if (dec_n_vacuum=='Y' or dec_n_vacuum=='y'):
       num_vacuum = -1
       while (num_vacuum < 0):
-        num_vacuum = input("        ->Enter the maximum number of vacuums: ")
+        num_vacuum = get_input("        ->Enter the maximum number of vacuums: ")
 	if num_vacuum < 0: print "              ->Value not valid."
     else: num_vacuum = 0
 
@@ -71,15 +81,15 @@ def runtest_menu(NUM_MAX_ALM):
 
 
   # Asking for continue
-  ch = raw_input("Start the test? (y/n): ")
+  ch = get_raw_input("Start the test? (y/n): ")
   return (ch, w, term, int_ramp, int_med, vacuum, dec_vacuum, int_vacuum, num_vacuum)
 
 def createdb_menu(NUM_MAX_ALM):
   # Asking for the number of warehouses
-  w = input("Enter the number of warehouses: ")
+  w = get_input("Enter the number of warehouses: ")
 
   # confirming the input
-  ch = raw_input("Continue? (y/n): ")
+  ch = get_raw_input("Continue? (y/n): ")
   if ((ch != 'y') and (ch != 'Y')): return ()
 
   # Checking the number of warehouses entered
@@ -89,28 +99,28 @@ def createdb_menu(NUM_MAX_ALM):
   return (ch,w)
 
 def consistency_menu():
-  ch = raw_input("Continue? (y/n): ")
+  ch = get_raw_input("Continue? (y/n): ")
   if ((ch != 'y') and (ch != 'Y')): return ()
   return (ch,)
 
 def restore_menu():
   # confirming operation
-  ch = raw_input("Continue? (y/n): ")
+  ch = get_raw_input("Continue? (y/n): ")
   if ((ch != 'y') and (ch != 'Y')): return ()
   return (ch,)
 
 def delete_menu():
-  ch = raw_input("Delete database? (y/n): ")
+  ch = get_raw_input("Delete database? (y/n): ")
   if ((ch != 'y') and (ch != 'Y')):
     print "Database not modified."
     return ()
   return (ch,)
 
 def result_menu():
-  ch = raw_input("Do yo want to store the results into a file? (y/n): ")
+  ch = get_raw_input("Do yo want to store the results into a file? (y/n): ")
   if (ch == 'y' or ch == 'Y'):
     print "   Enter file name (prefereably with .tpc extension)"
-    name = raw_input("   filename: ")
+    name = get_raw_input("   filename: ")
     return (ch, name)
   return ()
 
@@ -125,7 +135,7 @@ def check_data(servers):
     else: msg = msg_list[0]
 
     has_logs = int(msg)
-  except RuntimeError:
+  except exceptions.RuntimeError:
     print "msg should be an integer but it isn't"
     sys.exit(-1)
   except DatabaseStatusError:
@@ -144,7 +154,7 @@ def check_data(servers):
     else: msg = msg_list[0]
  
     has_db = int(msg)
-  except RuntimeError:
+  except exceptions.RuntimeError:
     print msg
     sys.exit(-1)
   except DatabaseStatusError:
@@ -295,9 +305,10 @@ class server(Thread):
         if self.return_output: self.ans_queue.put(buffer)
         self.__lock.release()
     except ConnectionClosedException:
-      print "\nConnection closed by server. Shuting down connection %d %s..." % (self.id, self.addr)
-      self.disconnect()
-      os.kill(os.getpid(), signal.SIGUSR1)
+      print "Shuting down connection %d %s..." % (self.id, self.addr)
+      if self.connected:
+        self.disconnect()
+        os.kill(os.getpid(), signal.SIGUSR1)
 
 class server_grp:
   def __init__(self, nodes):
@@ -368,22 +379,21 @@ except IOError:
 servers = server_grp(nodes)
 tries = 1
 signal.signal(signal.SIGUSR1, connection_closed)
-try:
-  while not servers.connect():
-    if tries > 3:
-      print "It's not possible to connect to all the servers.\nExiting."
-      raise RuntimeException
-    sleep(3)
-    tries += 1
+while not servers.connect():
+  if tries > 3:
+    print "It's not possible to connect to all the servers.\nExiting..."
+    sys.exit(-1)
+  sleep(3)
+  tries += 1
 
 
-  NUM_MAX_ALM = 10
-  has_db = 1
-  has_logs = 1
+NUM_MAX_ALM = 10
+has_db = 1
+has_logs = 1
 
-  (has_db, has_logs) = check_data(servers)
+(has_db, has_logs) = check_data(servers)
 
-  cmd = main_menu(has_db, has_logs)
+cmd = main_menu(has_db, has_logs)
 # *** Parameters passed ***
 #  1: (ch,w)
 #  2: (ch,)
@@ -395,49 +405,46 @@ try:
 # 10: ()
 # 11: ()
 # ############################
-  while(cmd != 8):
-    run = False
-    if cmd == 1:
-      params = createdb_menu(NUM_MAX_ALM)
-      if params != () and (params[0] == 'y' or params[0] == 'Y'):
-        # Connect to server and make them to create the database
-        run = True
-
-    elif cmd == 2:
-      params = restore_menu()
-      if params != (): run = True
-
-    elif cmd == 3:
-      params = runtest_menu(NUM_MAX_ALM)
-      if params != ():
-        run = True
-        if params[1] > len(servers):
-          print "\nNumber of warehouses (%d) bigger than servers available (%d)!\nABORTING!!!\n\n" % (params[1], len(servers))
-          run = False
-  
-    elif cmd == 4:
-      params = consistency_menu()
-      if params != (): run = True
-  
-    elif cmd == 5:
-      params = delete_menu()
-      if params != (): run = True
-
-    elif cmd == 6:
-      params = result_menu()
-      if params != (): run = True
-  
-    elif cmd == 7:
-      # Just run without asking anything
-      params = ()
+while(cmd != 8):
+  run = False
+  if cmd == 1:
+    params = createdb_menu(NUM_MAX_ALM)
+    if params != () and (params[0] == 'y' or params[0] == 'Y'):
+      # Connect to server and make them to create the database
       run = True
-  
-    if run: servers.execute_all(cmd, params, False, False)
-  
-    (has_db, has_logs) = check_data(servers)
-    cmd = main_menu(has_db, has_logs)
 
-except ConnectionClosedException:
-  pass
+  elif cmd == 2:
+    params = restore_menu()
+    if params != (): run = True
+
+  elif cmd == 3:
+    params = runtest_menu(NUM_MAX_ALM)
+    if params != ():
+      run = True
+      if params[1] > len(servers):
+        print "\nNumber of warehouses (%d) bigger than servers available (%d)!\nABORTING!!!\n\n" % (params[1], len(servers))
+        run = False
+
+  elif cmd == 4:
+    params = consistency_menu()
+    if params != (): run = True
+
+  elif cmd == 5:
+    params = delete_menu()
+    if params != (): run = True
+
+  elif cmd == 6:
+    params = result_menu()
+    if params != (): run = True
+
+  elif cmd == 7:
+    # Just run without asking anything
+    params = ()
+    run = True
+
+  if run: servers.execute_all(cmd, params, False, False)
+
+  (has_db, has_logs) = check_data(servers)
+  cmd = main_menu(has_db, has_logs)
 
 servers.disconnect()
