@@ -253,6 +253,15 @@ def connection_closed(signum, frame):
     servers.disconnect()
     sys.exit(0)
 
+def createdb(servers, params):
+  # Create database in one server
+  s = servers.servers[0] # Let's execute in the first server
+  s.execute(1, params, False, False)
+
+  # Create dump of db and compact it
+  # Copy dump to other servers
+  # Execute dump
+
 if __name__ == "__main__":
   try:
     nodes = read_config()
@@ -295,7 +304,8 @@ if __name__ == "__main__":
       params = createdb_menu(NUM_MAX_ALM)
       if params != () and (params[0] == 'y' or params[0] == 'Y'):
         # Connect to server and make them to create the database
-        run = True
+        run = False # We don't want to execute this in all the servers
+	createdb(servers, params)
   
     elif cmd == 2:
       params = restore_menu()
