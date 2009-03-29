@@ -59,14 +59,22 @@ def getMyIP():
 	print "Using %s (localhost)" % hostaddr
     return hostaddr
 
+def usage():
+  print "usage:\n\t./srv_init.py <port #>"
 
-server_addr = (getMyIP(), int(sys.argv[1])) # The first parameter is the port
-print "Listening to connections on " + str(server_addr) + " address."
-s = ThreadingTCPServer(server_addr, Handler)
-try:
-  s.serve_forever()
-except KeyboardInterrupt:
-  import sys
-  print "Exiting..."
-  s.server_close()
-  sys.exit(0)
+if __name__ == "__main__":
+  if len(sys.argv) != 2:
+    print "Incorrect number of parameters!"
+    usage()
+    sys.exit()
+
+  server_addr = (getMyIP(), int(sys.argv[1])) # The first parameter is the port
+  print "Listening to connections on " + str(server_addr) + " address."
+  s = ThreadingTCPServer(server_addr, Handler)
+  try:
+    s.serve_forever()
+  except KeyboardInterrupt:
+    import sys
+    print "Exiting..."
+    s.server_close()
+    sys.exit(0)
