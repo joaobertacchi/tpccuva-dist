@@ -222,6 +222,9 @@ def main_menu(has_bd, has_logs):
 				return option
 			elif option == 8:
 				return option
+			# Here for testing. Remove later.
+			#elif option == 12:
+			#	return option
 
 def send_command(data_str, sock):
   data_size = len(data_str)
@@ -259,8 +262,10 @@ def createdb(servers, params):
   s.execute(1, params, False, False)
 
   # Create dump of db and compact it
+  s.execute(12, params, False, False)
+
   # Copy dump to other servers
-  # Execute dump
+  # Execute dump on others servers
 
 if __name__ == "__main__":
   try:
@@ -335,6 +340,13 @@ if __name__ == "__main__":
       # Just run without asking anything
       params = ()
       run = True
+
+    #elif cmd == 12:
+    #  # Remove later. It's here just for testing.
+    #  params = ()
+    #  run = False
+    #  s = servers.servers[0]
+    #  s.execute(cmd, params, False, False)
   
     if run: servers.execute_all(cmd, params, False, False)
   
