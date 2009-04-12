@@ -264,8 +264,11 @@ def createdb(servers, params):
   # Create dump of db and compact it
   s.execute(12, params, False, False)
 
-  # Copy dump to other servers
-  # Execute dump on others servers
+  # TODO: Copy dump to other servers
+  print "Copy tpcc_dump.gz file from server #%d to other servers" % s.id
+
+  # TODO: Execute dump on others servers
+  print "Populate databases using this dump file"
 
 if __name__ == "__main__":
   try:
