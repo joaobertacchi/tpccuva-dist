@@ -230,7 +230,7 @@ int trans_new_order(struct tnew_order_men *new_order, union tshm *shm){
 |*------------------------------------------------------------------*|
 |* Parámetro new_order: puntero a la estructura de mensaje recibida.*|
 |* Parámetro shm: Puntero a la memoria compartida donde se escriben.*|
-|* losresultados.                                                   *|
+|* losresultados. If shm is NULL then result is not saved in shm.   *|
 \* ---------------------------------------------------------------- */
 
 int i;
@@ -238,7 +238,10 @@ double sum_amount; /*Suma de cantidades de artículo*/
 
 getfechahora(o_entry_d); /*Se toma la fecha y la hora del sistema*/
 /******RESPUESTA EN MEMORIA COMPARTIDA***/
-strcpy(shm->new_order.o_entry_d,o_entry_d);
+if (shm == NULL)
+	fprintf(stdout, "Not copying o_entry_d to shm.\n");
+else
+	strcpy(shm->new_order.o_entry_d,o_entry_d);
 
 o_ol_cnt=0; /*Se inicializa el contador de artículos de la orden*/
 
@@ -262,16 +265,23 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 		fprintf(ferr, "VALORES DE LOS CAMPOS:\n");
 		fprintf(ferr, "w_id= %d, c_w_id = %d, c_d_id = %d, c_id = %d\n", w_id, w_id, d_id, c_id);
 		EXEC SQL ROLLBACK; /*Se redhaza la transacción*/
-		shm->new_order.o_ol_cnt=o_ol_cnt; /*se indica en la respuesta que la transacción */
+		if (shm == NULL)
+			fprintf(stdout, "Transaction cancelled.\n");
+		else
+			shm->new_order.o_ol_cnt=o_ol_cnt; /*se indica en la respuesta que la transacción */
 										  /*ha sido cancelada*/
 		return -1;
-	} /* if */
-	/*****RESPUESTA******/
-	shm->new_order.w_tax=w_tax;
-	shm->new_order.c_discount=c_discount;
-	strcpy(shm->new_order.c_last,c_last);
-	strcpy(shm->new_order.c_credit,c_credit);
-	/********************/
+	}
+	if (shm == NULL)
+		fprintf(stdout, "Not copying w_tax, c_discount, c_last and c_credit into shm.\n");
+	else{
+		/*****RESPUESTA******/
+		shm->new_order.w_tax=w_tax;
+		shm->new_order.c_discount=c_discount;
+		strcpy(shm->new_order.c_last,c_last);
+		strcpy(shm->new_order.c_credit,c_credit);
+		/********************/
+	}
 	/*Se actualiza el número para la siguiente orden de ese distrito*/
 	EXEC SQL SELECT d_next_o_id, d_tax 
 		INTO :d_next_o_id, :d_tax 
@@ -286,14 +296,21 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 		fprintf(ferr, "VALORES DE LOS CAMPOS:\n");
 		fprintf(ferr, "d_id= %d, d_w_id = %d\n", d_id, w_id);
 		EXEC SQL ROLLBACK;
-		shm->new_order.o_ol_cnt=o_ol_cnt;
+		if (shm == NULL)
+			fprintf(stdout, "Transaction cancelled.\n");
+		else
+			shm->new_order.o_ol_cnt=o_ol_cnt;
 		return -1;
-	} /* if */
+	}
 
-	/**RESPUESTA*****/
-	shm->new_order.d_tax=d_tax;
-	shm->new_order.o_id=d_next_o_id;
-	/****************/
+	if (shm == NULL)
+		fprintf(stdout, "Not copying d_tax and d_next_o_id into shm.\n");
+	else {
+		/**RESPUESTA*****/
+		shm->new_order.d_tax=d_tax;
+		shm->new_order.o_id=d_next_o_id;
+		/****************/
+	}
 
 	EXEC SQL UPDATE district SET  d_next_o_id=:d_next_o_id+1
 		WHERE d_id=:d_id AND d_w_id=:w_id;
@@ -306,7 +323,10 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 		fprintf(ferr, "VALORES DE LOS CAMPOS:\n");
 		fprintf(ferr, "d_id= %d, d_w_id = %d\n", d_id, w_id);
 		EXEC SQL ROLLBACK;
-		shm->new_order.o_ol_cnt=o_ol_cnt;
+		if (shm == NULL)
+			fprintf(stdout, "Transaction cancelled.\n");
+		else
+			shm->new_order.o_ol_cnt=o_ol_cnt;
 		return -1;
 	} /* if */
 
@@ -325,7 +345,10 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 		fprintf(ferr, "VALORES DE LOS CAMPOS:\n");
 		fprintf(ferr, "o_id = %d, d_id = %d, w_id = %d, c_id = %d, o_entry_d = %d, o_all_local = %d\n", o_id, d_id, w_id, c_id, o_entry_d, o_all_local);
 		EXEC SQL ROLLBACK;
-		shm->new_order.o_ol_cnt=o_ol_cnt;
+		if (shm == NULL)
+			fprintf(stdout, "Transaction cancelled.\n");
+		else
+			shm->new_order.o_ol_cnt=o_ol_cnt;
 		return -1;
 	} /* if */
 	/*Se inserta una nueva fila en new_order para reflejar la transacción*/
@@ -340,7 +363,10 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 		fprintf(ferr, "VALORES DE LOS CAMPOS:\n");
 		fprintf(ferr, "o_id = %d, d_id = %d, w_id = %d\n", o_id, d_id, w_id);
 		EXEC SQL ROLLBACK;
-		shm->new_order.o_ol_cnt=o_ol_cnt;
+		if (shm == NULL)
+			fprintf(stdout, "Transaction cancelled.\n");
+		else
+			shm->new_order.o_ol_cnt=o_ol_cnt;
 		return -1;
 	} /* if */
 
@@ -361,9 +387,13 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 
 		if (sqlca.sqlcode==NO_HAY_LINEAS){
 			/******ROLLBACK DE TRANSACCION POR ARTÏCULO INVÁLIDO*******/			
-			shm->new_order.ctl=-1; /**Indicación de transaccción rechazada**/
+			if (shm == NULL)
+				fprintf(stdout, "Transaction cancelled.\n");
+			else
+				shm->new_order.ctl=-1; /**Indicación de transaccción rechazada**/
 			EXEC SQL ROLLBACK WORK;
-			shm->new_order.o_ol_cnt=o_ol_cnt;
+			if (shm != NULL)
+				shm->new_order.o_ol_cnt=o_ol_cnt;
 			return(0);
 		}
 		if (sqlca.sqlcode<0){
@@ -375,14 +405,21 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 			fprintf(ferr, "VALORES DE LOS CAMPOS:\n");
 			fprintf(ferr, "i_id = %d\n", i_id);
 			EXEC SQL ROLLBACK;
-			shm->new_order.o_ol_cnt=o_ol_cnt;
+			if (shm == NULL)
+				fprintf(stdout, "Transaction cancelled.\n");
+			else
+				shm->new_order.o_ol_cnt=o_ol_cnt;
 			return -1;
 		} /* if */
-		/**************************************/
-		/***RESPUESTA***/
-		shm->new_order.item[i].i_price=i_price;
-		strcpy(shm->new_order.item[i].i_name,i_name);
-		/***************/
+		if (shm != NULL) {
+			/**************************************/
+			/***RESPUESTA***/
+			shm->new_order.item[i].i_price=i_price;
+			strcpy(shm->new_order.item[i].i_name,i_name);
+			/***************/
+		} else {
+			fprintf(stdout, "Not copying i_price and i_name.\n");
+		}
 		EXEC SQL SELECT s_quantity, s_data, s_dist_01, s_dist_02, s_dist_03, s_dist_04, s_dist_05, s_dist_06, s_dist_07, s_dist_08, s_dist_09, s_dist_10
  			INTO :s_quantity, :s_data, :s_dist_01, :s_dist_02, :s_dist_03, :s_dist_04, :s_dist_05, :s_dist_06, :s_dist_07, :s_dist_08, :s_dist_09, :s_dist_10 
 			FROM stock 	
@@ -396,12 +433,19 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 			fprintf(ferr, "VALORES DE LOS CAMPOS:\n");
 			fprintf(ferr, "s_i_id = %d, s_w_id = %d, s_w_id = %d\n", ol_i_id, s_w_id, ol_supply_w_id);
 			EXEC SQL ROLLBACK;
-			shm->new_order.o_ol_cnt=o_ol_cnt;
+			if (shm == NULL)
+				fprintf(stdout, "Transaction cancelled.\n");
+			else
+				shm->new_order.o_ol_cnt=o_ol_cnt;
 			return -1;
 		} /* if */
-		/**RESPUESTA**/
-		shm->new_order.item[i].s_quantity=s_quantity;
-		/*************/
+		if (shm == NULL)
+			fprintf(stdout, "Not copying s_quantity.\n");
+		else {
+			/**RESPUESTA**/
+			shm->new_order.item[i].s_quantity=s_quantity;
+			/*************/
+		}
 		switch(d_id){
 			case 1: strcpy(ol_dist_info,s_dist_01); break;
 			case 2: strcpy(ol_dist_info,s_dist_02); break;
@@ -428,7 +472,10 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 				fprintf(ferr, "VALORES DE LOS CAMPOS:\n");
 				fprintf(ferr, "s_i_id = %d, s_w_id = %d\n", ol_i_id, ol_supply_w_id);
 				EXEC SQL ROLLBACK;
-				shm->new_order.o_ol_cnt=o_ol_cnt;
+				if (shm == NULL)
+					fprintf(stdout, "Transaction cancelled.\n");
+				else
+					shm->new_order.o_ol_cnt=o_ol_cnt;
 				return -1;
 			} /* if */
 		}
@@ -445,7 +492,10 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 				fprintf(ferr, "VALORES DE LOS CAMPOS:\n");
 				fprintf(ferr, "s_i_id = %d, s_w_id = %d\n", ol_i_id, ol_supply_w_id);
 				EXEC SQL ROLLBACK;
-				shm->new_order.o_ol_cnt=o_ol_cnt;
+				if (shm == NULL)
+					fprintf(stdout, "Transaction cancelled.\n");
+				else
+					shm->new_order.o_ol_cnt=o_ol_cnt;
 				return -1;
 			} /* if */
 		}
@@ -460,7 +510,10 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 			fprintf(ferr, "VALORES DE LOS CAMPOS:\n");
 			fprintf(ferr, "s_i_id = %d, s_w_id = %d\n", ol_i_id, ol_supply_w_id);
 			EXEC SQL ROLLBACK;
-			shm->new_order.o_ol_cnt=o_ol_cnt;
+			if (shm == NULL)
+				fprintf(stdout, "Transaction cancelled.\n");
+			else
+				shm->new_order.o_ol_cnt=o_ol_cnt;
 			return -1;
 		} /* if */
 		/*ARTICULO REMOTO*/
@@ -476,19 +529,30 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 				fprintf(ferr, "VALORES DE LOS CAMPOS:\n");
 				fprintf(ferr, "s_i_id = %d, s_w_id = %d\n", ol_i_id, ol_supply_w_id);
 				EXEC SQL ROLLBACK;
-				shm->new_order.o_ol_cnt=o_ol_cnt;
+				if (shm == NULL)
+					fprintf(stdout, "Transaction cancelled.\n");
+				else
+					shm->new_order.o_ol_cnt=o_ol_cnt;
 				return -1;
 			} /* if */
 			o_all_local=0;
 		}/*de if*/
-		/*Se comprueba si i_data contiene la cadena 'original'*/
-		if ((strstr(i_data,"original") != (char *)NULL) && (strstr(s_data,"original") != (char *)NULL)) 
-			shm->new_order.item[i].b_g= 'B';  /**RESPUESTA**/
-		else shm->new_order.item[i].b_g= 'G'; /**RESPUESTA**/
+
+		if (shm == NULL)
+			fprintf(stdout, "Not copying b_g into shm.\n");
+		else {
+			/*Se comprueba si i_data contiene la cadena 'original'*/
+			if ((strstr(i_data,"original") != (char *)NULL) && (strstr(s_data,"original") != (char *)NULL)) 
+				shm->new_order.item[i].b_g= 'B';  /**RESPUESTA**/
+			else shm->new_order.item[i].b_g= 'G'; /**RESPUESTA**/
+		}
 		
 		/*Se calcula la cuantia de la orden*/
 		ol_amount=ol_quantity*i_price;
-		shm->new_order.item[i].ol_amount=ol_amount; /**RESPUESTA**/
+		if (shm == NULL)
+			fprintf(stdout, "Not copying ol_amount into shm.\n");
+		else
+			shm->new_order.item[i].ol_amount=ol_amount; /**RESPUESTA**/
 		sum_amount=sum_amount+ol_amount;
 
 		EXEC SQL INSERT INTO order_line (ol_o_id, ol_d_id, ol_w_id, ol_number, ol_i_id, ol_supply_w_id, ol_quantity, ol_amount, ol_dist_info)
@@ -502,7 +566,10 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 			fprintf(ferr, "VALORES DE LOS CAMPOS:\n");
 			fprintf(ferr, "ol_o_id = %d, ol_d_id = %d, ol_w_id = %d, ol_number = %d, ol_i_id = %d, ol_supply_w_id = %d, ol_quantity = %d, ol_amount = %f, ol_dist_info = %s\n", o_id, d_id, ol_w_id, ol_number);
 			EXEC SQL ROLLBACK;
-			shm->new_order.o_ol_cnt=o_ol_cnt;
+			if (shm == NULL)
+				fprintf(stdout, "Transaction cancelled.\n");
+			else
+				shm->new_order.o_ol_cnt=o_ol_cnt;
 			return -1;
 		} /* if */
 		i++; /*se incrementa el contador de artículos*/
@@ -522,7 +589,10 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 			fprintf(ferr, "VALORES DE LOS CAMPOS:\n");
 			fprintf(ferr, "o_id = %d, o_d_id = %d, o_w_id = %d\n", o_id, d_id, w_id);
 			EXEC SQL ROLLBACK;
-			shm->new_order.o_ol_cnt=o_ol_cnt;
+			if (shm == NULL)
+				fprintf(stdout, "Transaction cancelled.\n");
+			else
+				shm->new_order.o_ol_cnt=o_ol_cnt;
 			return -1;
 		} /* if */
 	}/*de if*/
@@ -538,15 +608,22 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 		fprintf(ferr, "VALORES DE LOS CAMPOS:\n");
 		fprintf(ferr, "o_id = %d, o_d_id = %d, o_w_id = %d\n", o_id, d_id, w_id);
 		EXEC SQL ROLLBACK;
-		shm->new_order.o_ol_cnt=o_ol_cnt;
+		if (shm == NULL)
+			fprintf(stdout, "Transaction cancelled.\n");
+		else
+			shm->new_order.o_ol_cnt=o_ol_cnt;
 		return -1;
 	} /* if */
 
-	/**RESPUESTA**/
-	shm->new_order.o_ol_cnt=o_ol_cnt;
-	shm->new_order.total_amount=sum_amount*(1-c_discount)*(1+w_tax+d_tax);
-	shm->new_order.ctl=0; /**Indicación de transacción realizada**/
-	/*************/
+	if (shm == NULL)
+		fprintf(stdout, "Not copying o_ol_cnt, total_amount and ctl into shm");
+	else {
+		/**RESPUESTA**/
+		shm->new_order.o_ol_cnt=o_ol_cnt;
+		shm->new_order.total_amount=sum_amount*(1-c_discount)*(1+w_tax+d_tax);
+		shm->new_order.ctl=0; /**Indicación de transacción realizada**/
+		/*************/
+	}
 	/*SE CONFURMA LA TRANSACCIÓN*/
 	EXEC SQL COMMIT WORK; 
 	/********ERROR*********/
@@ -1318,7 +1395,10 @@ int t_consumer(){
 				break;
 			}
 			/********************** EJECUCIÓN DE TRANSACCIÓN *************************/
-			trans_new_order(&msg.tran.new_order, clientela[msg.id].shm);
+			if (srv_id == msg.srv_id){
+				trans_new_order(&msg.tran.new_order, clientela[msg.id].shm);
+			else
+				trans_new_order(&msg.tran.new_order, NULL);
 
 			/*********************	RESPUESTA DE TRANSACCIÓN**************************/
 			/* Answer given just if the question came from same warehouse */
