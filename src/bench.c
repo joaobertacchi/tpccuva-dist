@@ -2978,7 +2978,7 @@ strcat(filenameBuffer,"tm_delivery_res.log");
 	}
 	dist_saltado=0;
 	
-/* —————————————————————————————————————————————————————————————————————————————————————————————————————————————— */
+/* √ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë */
 	fscanf(aux, "Inicio Transaccion. Fecha Encolado: %d %d, Almacen %d, Repartidor %d\n",&l1,&l2,&l3,&l4);
 	while(!feof(aux)){
 		fscanf(aux, "\t%c%d %d\n",&l2,&l3,&l4);
@@ -3013,9 +3013,9 @@ strcat(filenameBuffer,"check.log");
 	} else {
 
 	/* Reading the first line from file*/
-	/* ————————————————————————————————————————————————— */
-	fprintf(fich, "Hora de comienzo\tTiempo desde el Inicio (s)\tDuraciÛn (s)\n");
-	fscanf(aux, "1∫ sello %d %d 2∫ sello %d %d", &sellohora1.time, &sellohora1.millitm, &sellohora2.time, &sellohora2.millitm);
+	/* √ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë */
+	fprintf(fich, "Hora de comienzo\tTiempo desde el Inicio (s)\tDuraci√≥n (s)\n");
+	fscanf(aux, "1¬∫ sello %d %d 2¬∫ sello %d %d", &sellohora1.time, &sellohora1.millitm, &sellohora2.time, &sellohora2.millitm);
 	while(!feof(aux)){
 
 		/* Obtaining the current checkpoing execution time */
@@ -3045,7 +3045,7 @@ strcat(filenameBuffer,"check.log");
 		}
 
 		/* Reading next line */
-		fscanf(aux, " \n1∫ sello %d %d 2∫ sello %d %d", &sellohora1.time, &sellohora1.millitm, &sellohora2.time, &sellohora2.millitm);
+		fscanf(aux, " \n1¬∫ sello %d %d 2¬∫ sello %d %d", &sellohora1.time, &sellohora1.millitm, &sellohora2.time, &sellohora2.millitm);
 	} /* while */
 	fclose(fich);
 	fclose(aux);
@@ -3074,9 +3074,9 @@ strcat(filenameBuffer,"vacuum.log");
 	} else {
 
 	/* Read the first line from file */
-	/* ———————————————————————— */
-	fprintf(fich, "Hora de comienzo\tTiempo desde el Inicio (s)\tDuraciÛn (s)\n");
-	fscanf(aux, "1∫ sello %d %d 2∫ sello %d %d", &sellohora1.time, &sellohora1.millitm, &sellohora2.time, &sellohora2.millitm);
+	/* √ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë */
+	fprintf(fich, "Hora de comienzo\tTiempo desde el Inicio (s)\tDuraci√≥n (s)\n");
+	fscanf(aux, "1¬∫ sello %d %d 2¬∫ sello %d %d", &sellohora1.time, &sellohora1.millitm, &sellohora2.time, &sellohora2.millitm);
 	while(!feof(aux)){
 
 		/* Obtaining the current vacuum execution time */
@@ -3106,7 +3106,7 @@ strcat(filenameBuffer,"vacuum.log");
 		}
 
 		/* reading next line */
-		fscanf(aux, " \n1∫ sello %d %d 2∫ sello %d %d", &sellohora1.time, &sellohora1.millitm, &sellohora2.time, &sellohora2.millitm);
+		fscanf(aux, " \n1¬∫ sello %d %d 2¬∫ sello %d %d", &sellohora1.time, &sellohora1.millitm, &sellohora2.time, &sellohora2.millitm);
 	} /* while */
 	fclose(fich);
 	fclose(aux);
@@ -3273,8 +3273,8 @@ strcat(filenameBuffer,"vacuum.log");
 			/* Not comply */
 			fprintf(stdout, "\n>> TEST FAILED\n");
 			fprintf(stdout, "Transactions response time do not follow the standard requirements.\n");
-			/* —————————————————————————————————————————————————————————————————————— */
-			/* fprintf(stdout, "Consulte la secciÛn 'An·lisis de Resutados' del manual de usuario.\n"); */
+			/* √ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë */
+			/* fprintf(stdout, "Consulte la secci√≥n 'An√°lisis de Resutados' del manual de usuario.\n"); */
 			cuenta = 10;  /* forcing to exit for */
 		}
 	}
@@ -3441,8 +3441,8 @@ fprintf(fich,"\nEnd of measurement interval: %lf m\n\n", resta_tiempos(&inicio,&
 				/* Not comply */
 				fprintf(fich, "\n>> TEST FAILED\n");
 				fprintf(fich, "Transactions response time do not follow the standard requirements.\n");
-			/* ———————————————————————————————————————————————————————— */	
-			/*	fprintf(fich, "Consulte la secciÛn 'An·lisis de Resutados' del manual de usuario.\n"); */
+			/* √ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë√ë */	
+			/*	fprintf(fich, "Consulte la secci√≥n 'An√°lisis de Resutados' del manual de usuario.\n"); */
 				cuenta = 10;  /* forcing to exit for */
 			}
 		}
@@ -3559,7 +3559,7 @@ fprintf(fich,"\nEnd of measurement interval: %lf m\n\n", resta_tiempos(&inicio,&
 		fwrite (&pto, sizeof(pto), 1, g3);
 	}
 
-  for(alm=1;alm<=w;alm++){ /*for each almacÈn */
+  for(alm=1;alm<=w;alm++){ /*for each almac√©n */
 	for(d=1;d<=term;d++){   /*for each terminal  */
 		/*obtaining terminal log file name*/
 
@@ -4795,14 +4795,14 @@ void signal_int3(){
 /* ------------------------------------------------ *\
 |* signal_int3 function                             *|
 |* ------------------------------------------------ *|
-|* Esta funciÛn enmascara a la seÒal SIGINT en la   *|
+|* Esta funci√≥n enmascara a la se√±al SIGINT en la   *|
 |* etapa de control del test. Cuando se recibe esta *|
-|* seÒal pregunta el usuario si desea terminar con  *|
+|* se√±al pregunta el usuario si desea terminar con  *|
 |* el proceso. En caso afirmativo se fuerza al      *|
 |* valor '1' el flag global terminado que controla  *|
-|* la ejecuciÛn del test, provocando la             *|
-|* desactivaciÛn de los procesos que intervienen en *|
-|* Èl. Si el usuario decide continuar con el test,  *|
+|* la ejecuci√≥n del test, provocando la             *|
+|* desactivaci√≥n de los procesos que intervienen en *|
+|* √©l. Si el usuario decide continuar con el test,  *|
 |* el valor del flag no se modifica.                *|
 \* ------------------------------------------------ */
 
@@ -4825,15 +4825,15 @@ void signal_usr1(){
 /* ------------------------------------------------ *\
 |* signal_usr1 function                             *|
 |* ------------------------------------------------ *|
-|* Esta funciÛn enmascara a la seÒal SIGUSR1 en las *|
-|* etapa de control de carga y de restauraciÛn.     *|
-|* Esta seÒal la envÌan los procesos encargados de  *|
-|* la ejecuciÛn de la etapa correspondiente para    *|
+|* Esta funci√≥n enmascara a la se√±al SIGUSR1 en las *|
+|* etapa de control de carga y de restauraci√≥n.     *|
+|* Esta se√±al la env√≠an los procesos encargados de  *|
+|* la ejecuci√≥n de la etapa correspondiente para    *|
 |* indicar a la etapa de control que han terminado  *|
 |* su ejecucion.                                    *|
-|* Cuando se recibe esta seÒal se fuerza al valor   *|
+|* Cuando se recibe esta se√±al se fuerza al valor   *|
 |* '1' el flag global terminado que controla la     *|
-|* ejecuciÛn de la etapa.                           *|
+|* ejecuci√≥n de la etapa.                           *|
 \* ------------------------------------------------ */
 
 	if (signal(SIGUSR1, signal_usr1) == SIG_ERR){

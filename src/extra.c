@@ -1,12 +1,12 @@
 /********************************************************************\
 |*               BENCHMARK TPCC-UVA HEADER FILE                     *|
 |* -----------------------------------------------------------------*|
-|* En esta librerÌa se definen las funciones utilizadas para la     *|
-|* generaciÛn de datos de base de datos y de transacciones          *|
+|* En esta librer√≠a se definen las funciones utilizadas para la     *|
+|* generaci√≥n de datos de base de datos y de transacciones          *|
 |* ---------------------------------------------------------------- *|
 |* Programmed by:                                                   *|
-|*	Julio Alberto Hern·ndez Gonzalo.                            *|
-|*	Eduardo Hern·ndez Perdiguero.                               *|
+|*	Julio Alberto Hern√°ndez Gonzalo.                            *|
+|*	Eduardo Hern√°ndez Perdiguero.                               *|
 |*	Diego R. Llanos                                             *|
 \********************************************************************/
 
@@ -23,12 +23,12 @@ int
 double2int (double f)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que trunca un double convirtiendolo en *|
+|* Funci√≥n que trunca un double convirtiendolo en *|
 |* un int                                        *|
 |* ---------------------------------------------- *|
-|* Par·metro f: n˙mero a truncar                  *|
+|* Par√°metro f: n√∫mero a truncar                  *|
 |* ---------------------------------------------- *|
-|* Retorna el n˙mero truncado tipo int           *|
+|* Retorna el n√∫mero truncado tipo int           *|
 \* ---------------------------------------------- */
 
   return (int) floor (f);
@@ -38,12 +38,12 @@ int
 decimal (double f, int pos)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que retorna las parte decimal de un    *|
-|* double como un m˙mero tipo int.               *|
+|* Funci√≥n que retorna las parte decimal de un    *|
+|* double como un m√∫mero tipo int.               *|
 |* ---------------------------------------------- *|
-|* Par·metro f: n˙mero del que se desea obtener la*|
+|* Par√°metro f: n√∫mero del que se desea obtener la*|
 |* parte decimal.                                 *|
-|* Par·metro pos: posiciones decimales que se     *|
+|* Par√°metro pos: posiciones decimales que se     *|
 |* desean obtener                                 *|
 |* ---------------------------------------------- *|
 |* Retorna el int que contiene la parte decilmal *|
@@ -56,12 +56,12 @@ double
 aleat_dbl (double inicio, double fin)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que retorna las parte decimal de un    *|
-|* double como un m˙mero tipo int.               *|
+|* Funci√≥n que retorna las parte decimal de un    *|
+|* double como un m√∫mero tipo int.               *|
 |* ---------------------------------------------- *|
-|* Par·metro f: n˙mero del que se desea obtener la*|
+|* Par√°metro f: n√∫mero del que se desea obtener la*|
 |* parte decimal.                                 *|
-|* Par·metro pos: posiciones decimales que se     *|
+|* Par√°metro pos: posiciones decimales que se     *|
 |* desean obtener                                 *|
 |* ---------------------------------------------- *|
 |* Retorna el int que contiene la parte decilmal *|
@@ -74,15 +74,15 @@ int
 aleat_int (int inicio, int fin)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que genera un entero aleatÛrio         *|
+|* Funci√≥n que genera un entero aleat√≥rio         *|
 |* comprendido entre 'inicio' y 'fin' ambos       *|
 |* incluidos                                      *|
 |* ---------------------------------------------- *|
-|* Par·metro inicio: inicio del itervalo de       *|
-|* selecciÛn                                      *|
-|* Par·metro fin: fin del intervalo de selecciÛn  *|
+|* Par√°metro inicio: inicio del itervalo de       *|
+|* selecci√≥n                                      *|
+|* Par√°metro fin: fin del intervalo de selecci√≥n  *|
 |* ---------------------------------------------- *|
-|* Retorna el n˙mero entero generado              *|
+|* Retorna el n√∫mero entero generado              *|
 \* ---------------------------------------------- */
 
   return (inicio +
@@ -95,11 +95,11 @@ char *
 getfechahora (char *cad)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que obtiene la fecha y la hora del     *|
+|* Funci√≥n que obtiene la fecha y la hora del     *|
 |* sistema y la almacena en una cadena de         *|
 |* caracteres                                     *|
 |* ---------------------------------------------- *|
-|* Par·metro cad: cadena de caracteres donde se   *|
+|* Par√°metro cad: cadena de caracteres donde se   *|
 |* almacena la la fecha y la hora del sistema.    *|
 |* ---------------------------------------------- *|
 |* Retorna un puntero a la cadena donde se ha     *|
@@ -121,7 +121,7 @@ char *
 ctime_sin_salto (time_t * tiempo)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que elimina el salto de lÌnea de la    *|
+|* Funci√≥n que elimina el salto de l√≠nea de la    *|
 |* salida de c_time.                              *|
 \* ---------------------------------------------- */
 /* Elimina el salto de linea de la salida ctime */
@@ -138,39 +138,39 @@ int
 cad_alfa_num (int ini, int fin, char *cadena, char *estado1, char *estado2)
 {
 /* ------------------------------------------------------ *\
-|* FunciÛn que genera una cadena de caracteres            *|
-|* alfanumÈricos de tamaÒo comfrendido entre              *|
+|* Funci√≥n que genera una cadena de caracteres            *|
+|* alfanum√©ricos de tama√±o comfrendido entre              *|
 |* 'ini' y 'fin'                                          *|
 |* ------------------------------------------------------ *|
-|* Par·metro ini: inicio del entervalo de selecciÛn del   *|
-|* tamaÒo                                                 *|
-|* Par·metro fin: fin del entervalo de selecciÛn del tamaÒo*|
-|* Par·metro cadena: cadena donde se almacenan los        *|
+|* Par√°metro ini: inicio del entervalo de selecci√≥n del   *|
+|* tama√±o                                                 *|
+|* Par√°metro fin: fin del entervalo de selecci√≥n del tama√±o*|
+|* Par√°metro cadena: cadena donde se almacenan los        *|
 |* caractero aleatorios                                   *|
-|* Par·metro estado1: estado para la generaciÛn del       *|
-|* tamaÒo de la cadena aleatoria                          *|
-|* Par·metro estado2: estado para la generaciÛn del       *|
+|* Par√°metro estado1: estado para la generaci√≥n del       *|
+|* tama√±o de la cadena aleatoria                          *|
+|* Par√°metro estado2: estado para la generaci√≥n del       *|
 |* de los caracteres aleatorios                           *|
 |* ------------------------------------------------------ *|
-|* Retorna el tamaÒo de la cadena generada                *|
+|* Retorna el tama√±o de la cadena generada                *|
 \* ------------------------------------------------------ */
   int tam, i;
   char ch;
 
-  /* utilizamos estado1 para el tamaÒo de la cadena */
+  /* utilizamos estado1 para el tama√±o de la cadena */
   setstate (estado1);
   tam = (int) aleat_int (ini, fin);
   setstate (estado2);
   /* utilizamos estado2 para los caracteres aleatorios (e_global) */
 
   /*Se generan cada uno de los caracteres hasta completar el */
-  /*el tamaÒo generado                                      */
+  /*el tama√±o generado                                      */
   for (i = 0; i < tam; i++)
      {
        ch = (char) aleat_int (32, 125);	/*generamos aleatoriamente caracteres. */
        if ((ch >= 32) && (ch <= 125))
-	  {			/*sÛlo se contemplas caracteres alfanumÈricos   */
-	    /*ATENCI÷N: si el caracter generado en el 39 (comilla simple ') se escoje el */
+	  {			/*s√≥lo se contemplas caracteres alfanum√©ricos   */
+	    /*ATENCI√ñN: si el caracter generado en el 39 (comilla simple ') se escoje el */
 	    /*caracter 40. Esto se hace para evitar el error produce postgreSQL al       */
 	    /*introducir una comilla simple en un atributo.                              */
 	    if (ch == 39)
@@ -184,24 +184,24 @@ cad_alfa_num (int ini, int fin, char *cadena, char *estado1, char *estado2)
 	  }
      }				/* de for */
   cadena[i] = '\0';		/*se termina la cadena con el fin de cadena */
-  return tam;			/*se retorna el tamaÒo de la cadena generada */
+  return tam;			/*se retorna el tama√±o de la cadena generada */
 }
 
 int
 cad_num (int tam, char *cadena, char *estado)
 {
 /* ------------------------------------------------------- *\
-|* FunciÛn que genera una cadena de caracteres             *|
-|* numÈricos de tamaÒo 'tam'                               *|
+|* Funci√≥n que genera una cadena de caracteres             *|
+|* num√©ricos de tama√±o 'tam'                               *|
 |* ------------------------------------------------------- *|
-|* Par·metro tam: tamaÒo de la cadena de caracteres a      *|
+|* Par√°metro tam: tama√±o de la cadena de caracteres a      *|
 |* generar                                                 *|
-|* Par·metro cadena: cadena donde se almacenan los         *|
-|* n˙meros aleatorios                                      *|
-|* Par·metro estado: estado para la generaciÛn del tamaÒo  *|
+|* Par√°metro cadena: cadena donde se almacenan los         *|
+|* n√∫meros aleatorios                                      *|
+|* Par√°metro estado: estado para la generaci√≥n del tama√±o  *|
 |* de la cadena aleatoria.                                 *|
 |* ------------------------------------------------------- *|
-|* Retorna el tamaÒo de la cadena generada.                *|
+|* Retorna el tama√±o de la cadena generada.                *|
 \* ------------------------------------------------------- */
 
   int i;
@@ -224,13 +224,13 @@ char *
 crea_clast (int num, char *cadena)
 {
 /* ------------------------------------------------------- *\
-|* FunciÛn que genera el campo c_last seg˙n la cl·usula    *|
+|* Funci√≥n que genera el campo c_last seg√∫n la cl√°usula    *|
 |* 4.3.2.3 del TPC-C. Se concatenan tres cadenas de        *|
-|* determinadas por las tres cifras del n˙mero 'nnum'      *|
+|* determinadas por las tres cifras del n√∫mero 'nnum'      *|
 |* ------------------------------------------------------- *|
-|* Par·metro num: entero comprendido entre 000 y 999 que   *|
+|* Par√°metro num: entero comprendido entre 000 y 999 que   *|
 |* cuyas cifras determinan las cadenas a concatenar        *|
-|* Par·metro cadena: cadena donde se almacenan las cadenas *|
+|* Par√°metro cadena: cadena donde se almacenan las cadenas *|
 |* concatenadas.                                           *|
 |* ------------------------------------------------------- *|
 |* Retorna un puntero a la cadena generada                 *|
@@ -291,22 +291,22 @@ int
 nurand (int A, int x, int y, int C, char *estado1, char *estado2)
 {
 /* ------------------------------------------------------- *\
-|* FunciÛn que genera un n˙mero aleatÛrio con distribuciÛn *|
-|* no uniforme, seg˙n el mÈtodo definifido en la cl·usula  *|
+|* Funci√≥n que genera un n√∫mero aleat√≥rio con distribuci√≥n *|
+|* no uniforme, seg√∫n el m√©todo definifido en la cl√°usula  *|
 |* 2.1.6 del TPC-C.                                        *|
 |* ------------------------------------------------------- *|
-|* Par·metro A: entero que determina el intervalo [0, A]   *|
-|* para determinar un n˙ero aleatÛrio neces·rio la         *|
-|* generaciÛn del n˙emro buscado.                          *|
-|* Par·metro x: inicio del itervalo de selecciÛn.          *|
-|* Par·metro y: fin del itervalo de selecciÛn.             *|
-|* Par·metro C: constante seleccionada para cada atributo. *|
-|* Par·metro estado1: estado para la generaciÛn de un      *|
-|* n˙mero aleatorio seleccionado entre x e y               *|
-|* Par·metro estado2: estado para la generaciÛn de un      *|
-|* n˙mero aleatorio seleccionado 0 y A                     *|
+|* Par√°metro A: entero que determina el intervalo [0, A]   *|
+|* para determinar un n√∫ero aleat√≥rio neces√°rio la         *|
+|* generaci√≥n del n√∫emro buscado.                          *|
+|* Par√°metro x: inicio del itervalo de selecci√≥n.          *|
+|* Par√°metro y: fin del itervalo de selecci√≥n.             *|
+|* Par√°metro C: constante seleccionada para cada atributo. *|
+|* Par√°metro estado1: estado para la generaci√≥n de un      *|
+|* n√∫mero aleatorio seleccionado entre x e y               *|
+|* Par√°metro estado2: estado para la generaci√≥n de un      *|
+|* n√∫mero aleatorio seleccionado 0 y A                     *|
 |* ------------------------------------------------------- *|
-|* Retorna el n˙mero generado.                             *|
+|* Retorna el n√∫mero generado.                             *|
 \* ------------------------------------------------------- */
 
   int lon1, lon2;
@@ -317,7 +317,7 @@ nurand (int A, int x, int y, int C, char *estado1, char *estado2)
   setstate (estado2);
   lon2 = aleat_int (0, A);
 
-  /*Se obtienen el n˙mero seg˙n la cl·usula 2.1.6 */
+  /*Se obtienen el n√∫mero seg√∫n la cl√°usula 2.1.6 */
   return (((lon2 | lon1) + C) % (y - x + 1)) + x;
 };
 
@@ -326,31 +326,31 @@ void
 permutacion_int (int *v, int tam, char *estado)
 {
 /* ------------------------------------------------------- *\
-|* FunciÛn que genera una permutaciÛn de n˙meros aleatÛrios*|
-|* no uniforme, seg˙n el mÈtodo definifido en la cl·usula  *|
+|* Funci√≥n que genera una permutaci√≥n de n√∫meros aleat√≥rios*|
+|* no uniforme, seg√∫n el m√©todo definifido en la cl√°usula  *|
 |* 2.1.6 del TPC-C.                                        *|
 |* ------------------------------------------------------- *|
-|* Par·metro v: puntero a vector de enteros donde se       *|
-|* almacenan los caracteres de la premutaciÛn.             *|
-|* Par·metro tam: tamaÒo de la permutaciÛn                 *|
-|* Par·metro estado: estado para la generaciÛn de          *|
-|* de posiciones aleatÛrias en el vector                   *|
+|* Par√°metro v: puntero a vector de enteros donde se       *|
+|* almacenan los caracteres de la premutaci√≥n.             *|
+|* Par√°metro tam: tama√±o de la permutaci√≥n                 *|
+|* Par√°metro estado: estado para la generaci√≥n de          *|
+|* de posiciones aleat√≥rias en el vector                   *|
 \* ------------------------------------------------------- */
   int i, j, z;
 
   setstate (estado);
-  /*las cifras desde 0 hasta 'tam' se colocan en una posiciÛn aleatÛria del vector */
+  /*las cifras desde 0 hasta 'tam' se colocan en una posici√≥n aleat√≥ria del vector */
   for (i = 0; i < tam; i++)
     v[i] = -1;			/*inicializamos el vector */
   for (i = tam; i > 0; i--)
      {
-       j = (int) aleat_int (1, i);	/*se selecciona la posiciÛn aleatÛria */
+       j = (int) aleat_int (1, i);	/*se selecciona la posici√≥n aleat√≥ria */
        z = 0;
-       /*reccorremos el vector hasta la posiciÛn seleccionada para colocar el */
+       /*reccorremos el vector hasta la posici√≥n seleccionada para colocar el */
        /*la cifra que toca. */
        while (j > 0)
 	  {
-	    /*Si la posiciÛn seleccionada est· ocupada se pasa a la siguiente */
+	    /*Si la posici√≥n seleccionada est√° ocupada se pasa a la siguiente */
 	    if (v[z] == -1)
 	      j--;
 	    z++;
@@ -366,32 +366,32 @@ posicion_cartas (int *v, int tam, char *estado)
 {
 
 /* ------------------------------------------------------- *\
-|* FunciÛn que baraja la cartas para la mezcla de          *|
+|* Funci√≥n que baraja la cartas para la mezcla de          *|
 |* transacciones.                                          *|
 |* ------------------------------------------------------- *|
-|* Par·metro v: puntero a vector de enteros donde se       *|
-|* almacenan los identificadores de transacciÛn            *|
-|* Par·metro tam: tamaÒo de la baraja de transacciÛn       *|
-|* Par·metro estado: estado para la generaciÛn de          *|
-|* de posiciones aleatÛrias en el vector                   *|
+|* Par√°metro v: puntero a vector de enteros donde se       *|
+|* almacenan los identificadores de transacci√≥n            *|
+|* Par√°metro tam: tama√±o de la baraja de transacci√≥n       *|
+|* Par√°metro estado: estado para la generaci√≥n de          *|
+|* de posiciones aleat√≥rias en el vector                   *|
 \* ------------------------------------------------------- */
 
   int i, j, z;
 
-/*Se genera una permutaciÛn de n˙mero comprendidos entre 0 y 'tam'*/
+/*Se genera una permutaci√≥n de n√∫mero comprendidos entre 0 y 'tam'*/
   setstate (estado);
-/*las cifras desde 0 hasta 'tam' se colocan en una posiciÛn aleatÛria del vector*/
+/*las cifras desde 0 hasta 'tam' se colocan en una posici√≥n aleat√≥ria del vector*/
   for (i = 0; i < tam; i++)
     v[i] = -1;			/*inicializamos el vector */
   for (i = tam - 1; i >= 0; i--)
      {
        j = (int) aleat_int (0, i);
        z = 0;
-       /*reccorremos el vector hasta la posiciÛn seleccionada para colocar el */
+       /*reccorremos el vector hasta la posici√≥n seleccionada para colocar el */
        /*la cifra que toca. */
        while (j >= 0)
 	  {
-	    /*Si la posiciÛn seleccionada est· ocupada se pasa a la siguiente */
+	    /*Si la posici√≥n seleccionada est√° ocupada se pasa a la siguiente */
 	    if (v[z] == -1)
 	      j--;
 	    z++;
@@ -406,13 +406,13 @@ buscar_n_vector (int *v, int tam, int num)
 {
 
 /* ------------------------------------------------------- *\
-|* FunciÛn de b˙squeda en un vector ordenado.              *|
+|* Funci√≥n de b√∫squeda en un vector ordenado.              *|
 |* ------------------------------------------------------- *|
 |* Busca el entero 'num' en un vector ordenado de 'tam'    *|
 |* posiciones, apuntado por '*v'.                          *|
-|* Utiliza el algoritmo de b˙squeda bin·ria.               *|
+|* Utiliza el algoritmo de b√∫squeda bin√°ria.               *|
 |* ------------------------------------------------------- *|
-|* Se retorna la posiciÛn en la que se ha encontrado o '-1'*|
+|* Se retorna la posici√≥n en la que se ha encontrado o '-1'*|
 |* en caso de que no se haya podido encontrar.             *|
 \* ------------------------------------------------------- */
 
@@ -501,9 +501,9 @@ void
 insert_ord (int *v, int tam, int num)
 {
 /* ------------------------------------------------------- *\
-|* FunciÛn de inserciÛn en orden.                          *|
+|* Funci√≥n de inserci√≥n en orden.                          *|
 |* ------------------------------------------------------- *|
-|* Inserta en la posiciÛn correspondiente el entero 'num'  *|
+|* Inserta en la posici√≥n correspondiente el entero 'num'  *|
 |* en un vector ordenado de 'tam' posiciones, apuntado     *|
 |* por '*v'.                                               *|
 \* ------------------------------------------------------- */
@@ -539,28 +539,28 @@ void
 aleat_vect (int *v, int tam, int i, int f)
 {
 /* ------------------------------------------------------- *\
-|* FunciÛn de generaciÛn de n˙meros aleatÛrios.            *|
+|* Funci√≥n de generaci√≥n de n√∫meros aleat√≥rios.            *|
 |* ------------------------------------------------------- *|
-|* Genera un vector de n˙mero aleatorios no repetidos      *|
+|* Genera un vector de n√∫mero aleatorios no repetidos      *|
 |* comprendidos entre 'i' y 'fin', de 'tam' posiciones,    *|
 |*  apuntado por '*v'.                                     *|
 \* ------------------------------------------------------- */
   int cont, rnd;
 
-  /*Se genera cada uno de los n˙eros de las 'tam' posiciones del vector */
+  /*Se genera cada uno de los n√∫eros de las 'tam' posiciones del vector */
   for (cont = 0; cont < tam; cont++)
      {
-       rnd = aleat_int (i, f);	/*Se genera el n˙mero correspondiente */
-       /*Se mira si el n˙mero generado est· ya en el vector */
+       rnd = aleat_int (i, f);	/*Se genera el n√∫mero correspondiente */
+       /*Se mira si el n√∫mero generado est√° ya en el vector */
        if (buscar_n_vector (v, cont + 1, rnd) != -1)
 	  {
 	    do
-	       {		/*se incrementa el n˙mero generado hasta encontrar uno que no estÈ */
+	       {		/*se incrementa el n√∫mero generado hasta encontrar uno que no est√© */
 		 rnd++;
 	       }
 	    while (buscar_n_vector (v, cont + 1, rnd) != -1);
 	  }
-       insert_ord (v, cont + 1, rnd);	/*Se inserta el n˙mero encontrado */
+       insert_ord (v, cont + 1, rnd);	/*Se inserta el n√∫mero encontrado */
      }				/* for */
 }
 
@@ -568,11 +568,11 @@ double
 resta_tiempos (struct timeb *tAnt, struct timeb *tPost)
 {
 /* ------------------------------------------------------- *\
-|* FunciÛn que calcula en segundos la diferencia enrtre    *|
+|* Funci√≥n que calcula en segundos la diferencia enrtre    *|
 |* dos sellos de hora en                                   *|
 |* ------------------------------------------------------- *|
-|* Par·metro tAnt: primer sello de hora.                   *|
-|* Par·metro tPost: segundo sello de hora                  *|
+|* Par√°metro tAnt: primer sello de hora.                   *|
+|* Par√°metro tPost: segundo sello de hora                  *|
 |* --------------------------------------------------------*|
 |* Retorna la diferencia entre los sellos de hora          *|
 \* ------------------------------------------------------- */
@@ -584,8 +584,8 @@ int
 es_entero (char *s)
 {
 /* ------------------------------------------------------- *\
-|* FunciÛn que comprueba si la cadena representada por 's' *|
-|* representa un n˙mero entero. Si lo es retorna 1 y si no *|
+|* Funci√≥n que comprueba si la cadena representada por 's' *|
+|* representa un n√∫mero entero. Si lo es retorna 1 y si no *|
 |* 0.                                                      *|
 \* ------------------------------------------------------- */
 /*Se rrecorre la cadena comprobando cada caracter y cuando se encuenta uno */
@@ -603,8 +603,8 @@ int
 es_real (char *s)
 {
 /* ------------------------------------------------------- *\
-|* FunciÛn que comprueba si la cadena representada por 's' *|
-|* representa un n˙mero real. Si lo es retorna 1 y si no 0 *|
+|* Funci√≥n que comprueba si la cadena representada por 's' *|
+|* representa un n√∫mero real. Si lo es retorna 1 y si no 0 *|
 \* ------------------------------------------------------- */
 /*Se rrecorre la cadena comprobando cada caracter y cuando se encuenta uno */
 /*que no es entero ni punto se retorna 0.                                  */
@@ -622,11 +622,11 @@ int
 es_alfa (char *s)
 {
 /* ------------------------------------------------------- *\
-|* FunciÛn que comprueba si la cadena representada por 's' *|
-|* es alfanumÈrica. Si lo es retorna 1 y si no 0           *|
+|* Funci√≥n que comprueba si la cadena representada por 's' *|
+|* es alfanum√©rica. Si lo es retorna 1 y si no 0           *|
 \* ------------------------------------------------------- */
 /*Se rrecorre la cadena comprobando cada caracter y cuando se encuenta uno */
-/*que no es alfanumÈrico se retorna 0.                                     */
+/*que no es alfanum√©rico se retorna 0.                                     */
   while ((*s != '\0') && (*s != '\n'))
      {
        if (!isgraph (*s))

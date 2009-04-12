@@ -121,7 +121,7 @@ main ()
        ftime (&sello2);
 
        /* Writing timestamp */
-       fprintf (check, "1º sello %d %d 2º sello %d %d \n", sello1.time,
+       fprintf (check, "1Âº sello %d %d 2Âº sello %d %d \n", sello1.time,
 		sello1.millitm, sello2.time, sello2.millitm);
        fflush (check);
 
@@ -179,7 +179,7 @@ void
 sig_term ()
 {
 /* ---------------------------------------------- *\
-|* Función sig_term                               *|
+|* FunciÃ³n sig_term                               *|
 |* ---------------------------------------------- *|
 |* Function for signal SIGTERM handling.          *|
 |* Forces the flag 'no_term' to value '0' and     *|

@@ -34,12 +34,12 @@
 /**********************************************************************\
 |*               PROGRAMA MONITOR DE TRANSACCIONES                    *|
 |* ------------------------------------------------------------------ *|
-|* Ejecuta las transacciones enviadas por el ETR sugún su orden de    *| 
-|* llegada. Registra los sellos de hora de comienzo y finalización    *|
-|* de la transacción Delivery en un fichero de bitácora. Resgistra los*|
-|* los resultados de la ejecución de la transacción Delivery en un    *|
-|* fichero de bitácora. Registra los posibles errores de la ejecición *|
-|* de las transacciones en un fichero de bitácora.                    *|
+|* Ejecuta las transacciones enviadas por el ETR sugÃºn su orden de    *| 
+|* llegada. Registra los sellos de hora de comienzo y finalizaciÃ³n    *|
+|* de la transacciÃ³n Delivery en un fichero de bitÃ¡cora. Resgistra los*|
+|* los resultados de la ejecuciÃ³n de la transacciÃ³n Delivery en un    *|
+|* fichero de bitÃ¡cora. Registra los posibles errores de la ejeciciÃ³n *|
+|* de las transacciones en un fichero de bitÃ¡cora.                    *|
 \**********************************************************************/
 
 /**********************************************************************\
@@ -56,10 +56,10 @@ exec sql include sqlca;
 /**********************************************************************/
 
 /**********************************************************************\
-|* Definición de Constantes                                           *|
+|* DefiniciÃ³n de Constantes                                           *|
 \* ------------------------------------------------------------------ */
-#define TAM_MEM 1024    /* tamaño de la memoria compartida            */
-#define NUM_MAX_CLIENT 10 * NUM_MAX_ALM  /* número maximo de clientes */
+#define TAM_MEM 1024    /* tamaÃ±o de la memoria compartida            */
+#define NUM_MAX_CLIENT 10 * NUM_MAX_ALM  /* nÃºmero maximo de clientes */
                                          /* que pueden hacer conexion */
 #define NO_HAY_LINEAS 100 /* error de postgreSQL 'no encontrado'      */
 /**********************************************************************/
@@ -77,9 +77,9 @@ int salir=0;      /* Flag de permanencia en el bucle principal                  
 
 
 /* Global variables used by threads */
-int ncli;       /*variable que contendrá los identificadores de*/
+int ncli;       /*variable que contendrÃ¡ los identificadores de*/
                 /* terminal que se van asignando e los terminales en las conexiones*/
-struct sembuf operacion; /*estructura que contiene operación que se realiza sobre el semáforo*/
+struct sembuf operacion; /*estructura que contiene operaciÃ³n que se realiza sobre el semÃ¡foro*/
 /* -------------------------------- */
 
 /* ---------------------------------------------------------------- *\
@@ -203,9 +203,9 @@ EXEC SQL BEGIN DECLARE SECTION;
 EXEC SQL END DECLARE SECTION;
 
 /* ---------------------------------------------------------------- *\
-|* Vector para la Cominunicación con los terminales                 *|
+|* Vector para la CominunicaciÃ³n con los terminales                 *|
 \* ---------------------------------------------------------------- */
-/*Este vector almacena los identificadores de semáforo y de memoria y*/
+/*Este vector almacena los identificadores de semÃ¡foro y de memoria y*/
 /*el puntero a esta, de cada ETR que se ha conectado al MT*/
 struct tclientes{ 
 	int shmid;      /* Identificador de Memoria compartida con el Terminal*/
@@ -225,16 +225,16 @@ int srv_id;
 
 int trans_new_order(struct tnew_order_men *new_order, union tshm *shm){
 /* ---------------------------------------------------------------- *\
-|* Función que implementa la transacción New-Order según el perfil  *|
-|* de la cláusula 2.4 del TPC-C.                                    *|
+|* FunciÃ³n que implementa la transacciÃ³n New-Order segÃºn el perfil  *|
+|* de la clÃ¡usula 2.4 del TPC-C.                                    *|
 |*------------------------------------------------------------------*|
-|* Parámetro new_order: puntero a la estructura de mensaje recibida.*|
-|* Parámetro shm: Puntero a la memoria compartida donde se escriben.*|
+|* ParÃ¡metro new_order: puntero a la estructura de mensaje recibida.*|
+|* ParÃ¡metro shm: Puntero a la memoria compartida donde se escriben.*|
 |* losresultados. If shm is NULL then result is not saved in shm.   *|
 \* ---------------------------------------------------------------- */
 
 int i;
-double sum_amount; /*Suma de cantidades de artículo*/
+double sum_amount; /*Suma de cantidades de artÃ­culo*/
 
 getfechahora(o_entry_d); /*Se toma la fecha y la hora del sistema*/
 /******RESPUESTA EN MEMORIA COMPARTIDA***/
@@ -243,9 +243,9 @@ if (shm == NULL)
 else
 	strcpy(shm->new_order.o_entry_d,o_entry_d);
 
-o_ol_cnt=0; /*Se inicializa el contador de artículos de la orden*/
+o_ol_cnt=0; /*Se inicializa el contador de artÃ­culos de la orden*/
 
-/*Extracción de datos de la estructura de mensaje recibida*/
+/*ExtracciÃ³n de datos de la estructura de mensaje recibida*/
 w_id=new_order->w_id;
 d_id=new_order->d_id;
 c_id=new_order->c_id;
@@ -264,11 +264,11 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 		fprintf(ferr, "      %s\n", sqlca.sqlerrm.sqlerrmc);
 		fprintf(ferr, "VALORES DE LOS CAMPOS:\n");
 		fprintf(ferr, "w_id= %d, c_w_id = %d, c_d_id = %d, c_id = %d\n", w_id, w_id, d_id, c_id);
-		EXEC SQL ROLLBACK; /*Se redhaza la transacción*/
+		EXEC SQL ROLLBACK; /*Se redhaza la transacciÃ³n*/
 		if (shm == NULL)
 			fprintf(stdout, "Transaction cancelled.\n");
 		else
-			shm->new_order.o_ol_cnt=o_ol_cnt; /*se indica en la respuesta que la transacción */
+			shm->new_order.o_ol_cnt=o_ol_cnt; /*se indica en la respuesta que la transacciÃ³n */
 										  /*ha sido cancelada*/
 		return -1;
 	}
@@ -282,7 +282,7 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 		strcpy(shm->new_order.c_credit,c_credit);
 		/********************/
 	}
-	/*Se actualiza el número para la siguiente orden de ese distrito*/
+	/*Se actualiza el nÃºmero para la siguiente orden de ese distrito*/
 	EXEC SQL SELECT d_next_o_id, d_tax 
 		INTO :d_next_o_id, :d_tax 
 		FROM district
@@ -333,7 +333,7 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 	sum_amount=0; 
 	o_id = d_next_o_id;
 	o_all_local=1;
-	/*se inicializa la fila de orderr suponiendo que tódos los artículos son locales: o_all_local=1*/
+	/*se inicializa la fila de orderr suponiendo que tÃ³dos los artÃ­culos son locales: o_all_local=1*/
 	EXEC SQL INSERT INTO orderr (o_id, o_d_id, o_w_id, o_c_id, o_entry_d, o_carrier_id, o_all_local) 
 		VALUES (:o_id, :d_id, :w_id, :c_id, :o_entry_d, 0, :o_all_local); 
 	if (sqlca.sqlcode<0){
@@ -351,7 +351,7 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 			shm->new_order.o_ol_cnt=o_ol_cnt;
 		return -1;
 	} /* if */
-	/*Se inserta una nueva fila en new_order para reflejar la transacción*/
+	/*Se inserta una nueva fila en new_order para reflejar la transacciÃ³n*/
 	EXEC SQL INSERT INTO new_order (no_o_id, no_d_id, no_w_id) 
 		VALUES (:o_id, :d_id, :w_id);	
 	if (sqlca.sqlcode<0){
@@ -370,12 +370,12 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 		return -1;
 	} /* if */
 
-	/************* procesamos cada artículo de la orden***************/		
+	/************* procesamos cada artÃ­culo de la orden***************/		
 
 	i=0;
-	while((i<15) && (new_order->item[i].flag==1)) /*mientras no se llegue al artículo 15 y siga */
-		{	                                  /*habiendo artículos en el vector             */
-		/*extracción los datos del mensaje*/
+	while((i<15) && (new_order->item[i].flag==1)) /*mientras no se llegue al artÃ­culo 15 y siga */
+		{	                                  /*habiendo artÃ­culos en el vector             */
+		/*extracciÃ³n los datos del mensaje*/
 		ol_i_id=new_order->item[i].ol_i_id;
 		ol_supply_w_id=new_order->item[i].ol_supply_w_id;
 		ol_quantity=new_order->item[i].ol_quantity;
@@ -386,11 +386,11 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 			WHERE i_id=:ol_i_id;
 
 		if (sqlca.sqlcode==NO_HAY_LINEAS){
-			/******ROLLBACK DE TRANSACCION POR ARTÏCULO INVÁLIDO*******/			
+			/******ROLLBACK DE TRANSACCION POR ARTÃCULO INVÃLIDO*******/			
 			if (shm == NULL)
 				fprintf(stdout, "Transaction cancelled.\n");
 			else
-				shm->new_order.ctl=-1; /**Indicación de transaccción rechazada**/
+				shm->new_order.ctl=-1; /**IndicaciÃ³n de transaccciÃ³n rechazada**/
 			EXEC SQL ROLLBACK WORK;
 			if (shm != NULL)
 				shm->new_order.o_ol_cnt=o_ol_cnt;
@@ -459,7 +459,7 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 			case 10: strcpy(ol_dist_info,s_dist_10); break;
 		} /* switch */
 		
-		if (s_quantity>=ol_quantity+10){ /*Se actualiza el Stock del artículo*/
+		if (s_quantity>=ol_quantity+10){ /*Se actualiza el Stock del artÃ­culo*/
 			s_quantity=s_quantity-ol_quantity;
 			EXEC SQL UPDATE stock SET  s_quantity=:s_quantity
 				WHERE s_i_id = :ol_i_id AND s_w_id = :ol_supply_w_id;
@@ -479,7 +479,7 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 				return -1;
 			} /* if */
 		}
-		else{ /*Se renueba el stock del artículo*/			
+		else{ /*Se renueba el stock del artÃ­culo*/			
 			s_quantity=(s_quantity-ol_quantity)+91;
 			EXEC SQL UPDATE stock SET  s_quantity=:s_quantity
 				WHERE s_i_id = :ol_i_id AND s_w_id = :ol_supply_w_id;
@@ -572,11 +572,11 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 				shm->new_order.o_ol_cnt=o_ol_cnt;
 			return -1;
 		} /* if */
-		i++; /*se incrementa el contador de artículos*/
+		i++; /*se incrementa el contador de artÃ­culos*/
 	}/*de while*/
 
-	o_ol_cnt=i; /*recuento de artículos*/
-	/*Si algún artículo ha sido remoto se indica en la línea correspondiente*/
+	o_ol_cnt=i; /*recuento de artÃ­culos*/
+	/*Si algÃºn artÃ­culo ha sido remoto se indica en la lÃ­nea correspondiente*/
 	if (o_all_local==0){
 		EXEC SQL UPDATE orderr SET o_all_local=:o_all_local
 				WHERE o_id=:o_id AND o_d_id=:d_id AND o_w_id=:w_id;
@@ -621,10 +621,10 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 		/**RESPUESTA**/
 		shm->new_order.o_ol_cnt=o_ol_cnt;
 		shm->new_order.total_amount=sum_amount*(1-c_discount)*(1+w_tax+d_tax);
-		shm->new_order.ctl=0; /**Indicación de transacción realizada**/
+		shm->new_order.ctl=0; /**IndicaciÃ³n de transacciÃ³n realizada**/
 		/*************/
 	}
-	/*SE CONFURMA LA TRANSACCIÓN*/
+	/*SE CONFURMA LA TRANSACCIÃ“N*/
 	EXEC SQL COMMIT WORK; 
 	/********ERROR*********/
 	if (sqlca.sqlcode<0){
@@ -638,11 +638,11 @@ EXEC SQL BEGIN; /*COMIENZO DE TRANSACCION*/
 
 int trans_payment(struct tpayment_men *payment, union tshm *shm){
 /* ---------------------------------------------------------------- *\
-|* Función que implementa la transacción Payment según el perfil    *|
-|* de la cláusula 2.5 del TPC-C.                                    *|
+|* FunciÃ³n que implementa la transacciÃ³n Payment segÃºn el perfil    *|
+|* de la clÃ¡usula 2.5 del TPC-C.                                    *|
 |*------------------------------------------------------------------*|
-|* Parámetro payment: puntero a la estructura de mensaje recibida.  *|
-|* Parámetro shm: Puntero a la memoria compartida donde se escriben.*|
+|* ParÃ¡metro payment: puntero a la estructura de mensaje recibida.  *|
+|* ParÃ¡metro shm: Puntero a la memoria compartida donde se escriben.*|
 |* losresultados.                                                   *|
 \* ---------------------------------------------------------------- */
 
@@ -663,7 +663,7 @@ c_id = payment->c_id;
 
 getfechahora(h_date); /*Se toma la fecha y la hora del sistema*/
 
-EXEC SQL BEGIN; /*Se comienza la transacción*/
+EXEC SQL BEGIN; /*Se comienza la transacciÃ³n*/
 	EXEC SQL SELECT w_name, w_street_1, w_street_2, w_city, w_state, w_zip
 		INTO :w_name, :w_street_1, :w_street_2, :w_city, :w_state, :w_zip
 		FROM warehouse 
@@ -676,7 +676,7 @@ EXEC SQL BEGIN; /*Se comienza la transacción*/
 		fprintf(ferr, "      %s\n", sqlca.sqlerrm.sqlerrmc);			
 		fprintf(ferr, "VALORES DE LOS CAMPOS:\n");
 		fprintf(ferr, "w_id = %d\n", w_id);
-		EXEC SQL ROLLBACK; /*Se rechaza la transacción en caso de error*/
+		EXEC SQL ROLLBACK; /*Se rechaza la transacciÃ³n en caso de error*/
 		return -1;
 	} /* if */
 
@@ -764,13 +764,13 @@ EXEC SQL BEGIN; /*Se comienza la transacción*/
 			return -1;
 		} /* if */	
 
-		/*Se cuenta el número de filas coincidentes*/
+		/*Se cuenta el nÃºmero de filas coincidentes*/
 		EXEC SQL SELECT count(c_id)
 			INTO :cont
 			FROM customer
 			WHERE c_last = :c_last AND c_d_id = :c_d_id AND c_w_id = :c_w_id; 
 
-		if ((cont%2) != 0) cont++; /* si el número de coincidencias es par, se suma 1 */
+		if ((cont%2) != 0) cont++; /* si el nÃºmero de coincidencias es par, se suma 1 */
 
 		EXEC SQL OPEN c_porlast; /*Se inicializa el cursor*/
 
@@ -904,7 +904,7 @@ EXEC SQL BEGIN; /*Se comienza la transacción*/
 		return -1;
 	} /* if */
 	
-	/*SE CONFIRMA LA TRANSACCIÓN*/
+	/*SE CONFIRMA LA TRANSACCIÃ“N*/
 	EXEC SQL COMMIT WORK;
 
 	if (sqlca.sqlcode<0){
@@ -923,11 +923,11 @@ return(0);
 int trans_ostatus(struct torder_status_men *ostatus, union tshm *shm){
 
 /* ---------------------------------------------------------------- *\
-|* Función que implementa el perfil de transacción Order-Status     *|
-|* según la cláusula 2.6 del TPC-C.                                 *|
+|* FunciÃ³n que implementa el perfil de transacciÃ³n Order-Status     *|
+|* segÃºn la clÃ¡usula 2.6 del TPC-C.                                 *|
 |*------------------------------------------------------------------*|
-|* Parámetro ostatus: puntero a la estructura de mensaje recibida.  *|
-|* Parámetro shm: Puntero a la memoria compartida donde se escriben.*|
+|* ParÃ¡metro ostatus: puntero a la estructura de mensaje recibida.  *|
+|* ParÃ¡metro shm: Puntero a la memoria compartida donde se escriben.*|
 |* losresultados.                                                   *|
 \* ---------------------------------------------------------------- */
 
@@ -938,13 +938,13 @@ EXEC SQL BEGIN DECLARE SECTION;
 	int cont;
 EXEC SQL END DECLARE SECTION;
 
-/*Se extraen los datos del mensaje de transacción*/
+/*Se extraen los datos del mensaje de transacciÃ³n*/
 c_id = ostatus->c_id;
 d_id = ostatus->d_id;
 w_id = ostatus->w_id;
 strcpy(c_last, ostatus->c_last);
 
-EXEC SQL BEGIN; /*Se comienza la transacción*/
+EXEC SQL BEGIN; /*Se comienza la transacciÃ³n*/
 	if (c_id != 0){ /*CLIENTE SELECCIONADO POR C_ID */
 
 		EXEC SQL SELECT c_balance, c_first, c_middle, c_last 
@@ -979,7 +979,7 @@ EXEC SQL BEGIN; /*Se comienza la transacción*/
 		} /* if */
 
 		cont = 0;	
-		/*Se cuenta el número de filas coincidentes*/
+		/*Se cuenta el nÃºmero de filas coincidentes*/
 		EXEC SQL SELECT count(c_id)
 			INTO :cont
 			FROM customer
@@ -998,7 +998,7 @@ EXEC SQL BEGIN; /*Se comienza la transacción*/
 
 		EXEC SQL OPEN c_porlast2;
 
-		/*Se captura la fila coincidente de la posición intermedia*/
+		/*Se captura la fila coincidente de la posiciÃ³n intermedia*/
 		for (i = 0; i < cont/2; i++){
 			EXEC SQL FETCH FROM c_porlast2
 				INTO :c_id, :c_first, :c_middle, :c_balance;
@@ -1031,7 +1031,7 @@ EXEC SQL BEGIN; /*Se comienza la transacción*/
 		SELECT o_id, o_entry_d, o_carrier_id
 		FROM orderr
 		WHERE o_w_id = :w_id AND o_d_id = :d_id AND o_c_id = :c_id
-		ORDER BY o_id DESC; /*en orden descendente del número de orden*/
+		ORDER BY o_id DESC; /*en orden descendente del nÃºmero de orden*/
 
 	if (sqlca.sqlcode<0){
 		/*********ERROR*****************/
@@ -1087,7 +1087,7 @@ EXEC SQL BEGIN; /*Se comienza la transacción*/
 	shm->ostatus.o_carrier_id=o_carrier_id;
 	/*************/
 	
-	/*Se declara uncursor para las fils de la tabla order_line que porteneccan a ese almacén*/
+	/*Se declara uncursor para las fils de la tabla order_line que porteneccan a ese almacÃ©n*/
 	/*distrito, cliente, y la orden seleccinada anteriormente								*/
 	EXEC SQL DECLARE cur_ord_lines CURSOR FOR	
 		SELECT ol_i_id, ol_supply_w_id, ol_quantity, ol_amount, ol_delivery_d
@@ -1159,7 +1159,7 @@ EXEC SQL BEGIN; /*Se comienza la transacción*/
 		return -1;
 	} /* if */
 
-	/*SE CONFIRMA LA TRANSACCIÓN*/
+	/*SE CONFIRMA LA TRANSACCIÃ“N*/
 	EXEC SQL COMMIT WORK;
 
 	if (sqlca.sqlcode<0){
@@ -1177,21 +1177,21 @@ EXEC SQL BEGIN; /*Se comienza la transacción*/
 int trans_stock_level(struct tstock_level_men *stock_level, union tshm *shm){
 
 /* ---------------------------------------------------------------- *\
-|* Función que implementa el perfíl de transacción Stock-Level según*|
-|* la cláusula 2.8 del TPC-C.                                       *|
+|* FunciÃ³n que implementa el perfÃ­l de transacciÃ³n Stock-Level segÃºn*|
+|* la clÃ¡usula 2.8 del TPC-C.                                       *|
 |*------------------------------------------------------------------*|
-|* Parámetro stock_level: puntero a la estructura de mensaje        *|
+|* ParÃ¡metro stock_level: puntero a la estructura de mensaje        *|
 |* recibida.                                                        *|
-|* Parámetro shm: Puntero a la memoria compartida donde se escriben.*|
+|* ParÃ¡metro shm: Puntero a la memoria compartida donde se escriben.*|
 |* los resultados.                                                  *|
 \* ---------------------------------------------------------------- */
 
-/**************** EXTRACCIÓN DE DATOS *****************/
+/**************** EXTRACCIÃ“N DE DATOS *****************/
 w_id = stock_level->w_id;
 d_id = stock_level->d_id;
 threshold = stock_level->threshold;
 	
-EXEC SQL BEGIN; /*Se comienza la transacción*/
+EXEC SQL BEGIN; /*Se comienza la transacciÃ³n*/
 	EXEC SQL SELECT d_next_o_id 
 		INTO :d_next_o_id
 		FROM district
@@ -1231,20 +1231,20 @@ EXEC SQL COMMIT WORK;
 
 int trans_delivery(struct tdelivery_men *delivery){
 /* ---------------------------------------------------------------- *\
-|* Función que implementa el perfil de transacción Delivery según   *|
-|* la cláusula 2.7 del TPC-C.                                       *|
+|* FunciÃ³n que implementa el perfil de transacciÃ³n Delivery segÃºn   *|
+|* la clÃ¡usula 2.7 del TPC-C.                                       *|
 |*------------------------------------------------------------------*|
-|* Parámetro delivery: puntero a la estructura de mensaje recibida. *|
+|* ParÃ¡metro delivery: puntero a la estructura de mensaje recibida. *|
 \* ---------------------------------------------------------------- */
 
-/**************** EXTRACCIÓN DE DATOS ***************/
+/**************** EXTRACCIÃ“N DE DATOS ***************/
 w_id = delivery->w_id;
 o_carrier_id = delivery->o_carrier_id;
 
-/*Se indica en el fichero de resultados el comienzo de la transacción*/ 
+/*Se indica en el fichero de resultados el comienzo de la transacciÃ³n*/ 
 fprintf(f_res_deli, "Inicio Transaccion. Fecha Encolado: %d %d, Almacen %d, Repartidor %d\n", delivery->seg, delivery->mseg, delivery->w_id, delivery->o_carrier_id);
 
-EXEC SQL BEGIN; /*se comienza la transacción*/
+EXEC SQL BEGIN; /*se comienza la transacciÃ³n*/
 	for (no_d_id = 1; no_d_id <= 10; no_d_id++){
 		EXEC SQL SELECT min(no_o_id)
 			INTO :no_o_id
@@ -1293,7 +1293,7 @@ EXEC SQL BEGIN; /*se comienza la transacción*/
 				EXEC SQL ROLLBACK;
 				return -1;
 			} /* if */
-			/*Se actualiza en la orden correspondiente el número de transportista*/
+			/*Se actualiza en la orden correspondiente el nÃºmero de transportista*/
 			EXEC SQL UPDATE orderr
 				SET o_carrier_id = :o_carrier_id
 				WHERE o_w_id = :w_id AND o_d_id = :no_d_id AND o_id = :no_o_id;
@@ -1339,7 +1339,7 @@ EXEC SQL BEGIN; /*se comienza la transacción*/
 				return -1;
 			} /* if */
 
-			/*Se actualiza el balance del cliente, y su número de repartos*/
+			/*Se actualiza el balance del cliente, y su nÃºmero de repartos*/
 			EXEC SQL UPDATE customer
 				SET c_balance = c_balance + :c_balance, c_delivery_cnt = c_delivery_cnt + 1
 				WHERE c_w_id = :w_id AND c_d_id = :no_d_id AND c_id = :o_c_id;
@@ -1358,7 +1358,7 @@ EXEC SQL BEGIN; /*se comienza la transacción*/
 		} /* if */		
 	} /* for */
 	
-	/*Se confirma la transacción*/
+	/*Se confirma la transacciÃ³n*/
 	EXEC SQL COMMIT WORK;
 
 	if (sqlca.sqlcode<0){
@@ -1387,28 +1387,28 @@ int t_consumer(){
     	salir = 1;
     }
     switch (msg.tipo){
- 	      case NEW_ORDER: /******************TRANSACCIÓN NEW_ORDER************************/
+ 	      case NEW_ORDER: /******************TRANSACCIÃ“N NEW_ORDER************************/
 			fprintf(stdout, "NEW_ORDER Transaction.    ");
 			fprintf(stdout, "Terminal %d.", msg.id);
 			if (msg.id >= ncli) {
-				fprintf(stdout, "Nº de terminal no reconocido\n");
+				fprintf(stdout, "NÂº de terminal no reconocido\n");
 				break;
 			}
-			/********************** EJECUCIÓN DE TRANSACCIÓN *************************/
+			/********************** EJECUCIÃ“N DE TRANSACCIÃ“N *************************/
 			if (srv_id == msg.srv_id){
 				trans_new_order(&msg.tran.new_order, clientela[msg.id].shm);
 			else
 				trans_new_order(&msg.tran.new_order, NULL);
 
-			/*********************	RESPUESTA DE TRANSACCIÓN**************************/
+			/*********************	RESPUESTA DE TRANSACCIÃ“N**************************/
 			/* Answer given just if the question came from same warehouse */
 			if (srv_id == msg.srv_id){
 				operacion.sem_num= clientela[msg.id].ident; 
-				operacion.sem_op=1;  /*abrimos el semaforo: el terminal podrá acceder a los resultados*/
+				operacion.sem_op=1;  /*abrimos el semaforo: el terminal podrÃ¡ acceder a los resultados*/
 				operacion.sem_flg=0;
           			if (semop(clientela[msg.id].semid, &operacion, 1) == -1){
-					/* Se ha producido un error al abrir el semáforo */
-					fprintf(stderr, "Error al abrir el semáforo\n");
+					/* Se ha producido un error al abrir el semÃ¡foro */
+					fprintf(stderr, "Error al abrir el semÃ¡foro\n");
 					fprintf(stderr, "Error: %s", strerror(errno));
 					break;
 				}
@@ -1416,26 +1416,26 @@ int t_consumer(){
 			fprintf(stdout, "\tDone.\n");
 			break;
 
-	      case PAYMENT: /*******TRANSACCIÓN PAYMENT******/
+	      case PAYMENT: /*******TRANSACCIÃ“N PAYMENT******/
 			fprintf(stdout, "PAYMENT Transaction.      ");
 			fprintf(stdout, "Terminal %d.", msg.id);
 
 			if (msg.id >= ncli) {
-				fprintf(stdout, "Nº de terminal no reconocido\n");
+				fprintf(stdout, "NÂº de terminal no reconocido\n");
 				break;
 			}
-			/********************** EJECUCIÓN DE TRANSACCIÓN *************************/
+			/********************** EJECUCIÃ“N DE TRANSACCIÃ“N *************************/
 			trans_payment(&msg.tran.payment, clientela[msg.id].shm);
 
-			/*********************	RESPUESTA DE TRANSACCIÓN**************************/
+			/*********************	RESPUESTA DE TRANSACCIÃ“N**************************/
 			/* Answer given just if the question came from same warehouse */
 			if (srv_id == msg.srv_id){
 				operacion.sem_num= clientela[msg.id].ident; 
-				operacion.sem_op=1;  /*abrimos el semaforo: el terminal podrá acceder a los resultados*/
+				operacion.sem_op=1;  /*abrimos el semaforo: el terminal podrÃ¡ acceder a los resultados*/
 				operacion.sem_flg=0;
           			if (semop(clientela[msg.id].semid, &operacion, 1) == -1){
-					/* Se ha producido un error al abrir el semáforo */
-					fprintf(stderr, "Error al abrir el semáforo\n");
+					/* Se ha producido un error al abrir el semÃ¡foro */
+					fprintf(stderr, "Error al abrir el semÃ¡foro\n");
 					fprintf(stderr, "Error: %s\n", strerror(errno));
 					break;
 				}
@@ -1443,27 +1443,27 @@ int t_consumer(){
 			fprintf(stdout, "\tDone.\n");
 			break;
 
-	      case ORDER_STATUS:  /*******TRANSACCIÓN ORDER-STATUS******/
+	      case ORDER_STATUS:  /*******TRANSACCIÃ“N ORDER-STATUS******/
 	      		/* Executed just if the msg came from a client conected to this warehouse */
 			if (srv_id == msg.srv_id){
 				fprintf(stdout, "ORDER_STATUS Transaction. ");
 				fprintf(stdout, "Terminal %d.", msg.id);
 
 				if (msg.id >= ncli) {
-					fprintf(stdout, "Nº de terminal no reconocido\n");
+					fprintf(stdout, "NÂº de terminal no reconocido\n");
 					break;
 				}
-				/********************** EJECUCIÓN DE TRANSACCIÓN *************************/
+				/********************** EJECUCIÃ“N DE TRANSACCIÃ“N *************************/
 				trans_ostatus(&msg.tran.ostatus, clientela[msg.id].shm);
 
-				/*********************	RESPUESTA DE TRANSACCIÓN**************************/
+				/*********************	RESPUESTA DE TRANSACCIÃ“N**************************/
 				/* Answer given just if the question came from same warehouse */
 				operacion.sem_num= clientela[msg.id].ident; 
-          		    	operacion.sem_op=1; /*abrimos el semaforo: el terminal podrá acceder a los resultados*/
+          		    	operacion.sem_op=1; /*abrimos el semaforo: el terminal podrÃ¡ acceder a los resultados*/
     	       	    		operacion.sem_flg=0;
 	          		if (semop(clientela[msg.id].semid, &operacion, 1) == -1){
-					/* Se ha producido un error al abrir el semáforo */
-					fprintf(stderr, "Error al abrir el semáforo\n");
+					/* Se ha producido un error al abrir el semÃ¡foro */
+					fprintf(stderr, "Error al abrir el semÃ¡foro\n");
 					fprintf(stderr, "Error: %s\n", strerror(errno));
 					break;
 				}
@@ -1471,26 +1471,26 @@ int t_consumer(){
 			}
 			break;
 
-	      case DELIVERY: /*******TRANSACCIÓN DELIVERY******/
+	      case DELIVERY: /*******TRANSACCIÃ“N DELIVERY******/
 			fprintf(stdout, "DELIVERY Transaction.     ");
 			fprintf(stdout, "Terminal %d.", msg.id);
 
 			if (msg.id >= ncli) {
-				printf("Nº de terminal no reconocido\n");
+				printf("NÂº de terminal no reconocido\n");
 				break;
 			}
-			/********************** EJECUCIÓN DE TRANSACCIÓN *************************/
+			/********************** EJECUCIÃ“N DE TRANSACCIÃ“N *************************/
 			trans_delivery(&msg.tran.delivery);
 
-			/*********************	RESPUESTA DE TRANSACCIÓN**************************/
+			/*********************	RESPUESTA DE TRANSACCIÃ“N**************************/
 			/* TODO: Answer given just if the question came from same warehouse */
-			/*Se toma el sello de hora que indica la finalización de la transacción y se*/
+			/*Se toma el sello de hora que indica la finalizaciÃ³n de la transacciÃ³n y se*/
 			/*escribe en el fichero de tiempos de respuesta junto con el sello de hora que ha enviado el */
-			/*terminal y que indica el inicio de la transacción. De esta forma se podrá calcular */
+			/*terminal y que indica el inicio de la transacciÃ³n. De esta forma se podrÃ¡ calcular */
 			/*el tiempo de respuesta en el recuento de resultados*/
 			ftime(&sellohora);
 			fprintf(f_tr_deli,"\n %d %d %d %d %d %d ",msg.tran.delivery.w_id,msg.tran.delivery.d_id,msg.tran.delivery.seg,msg.tran.delivery.mseg,sellohora.time,sellohora.millitm);
-			/*Se escribe en el fichero de resultados el sollo de hora de finalización*/
+			/*Se escribe en el fichero de resultados el sollo de hora de finalizaciÃ³n*/
 			fprintf(f_res_deli, "Terminada a las: %d %d\n\n", sellohora.time, sellohora.millitm);
 
 			fprintf(stdout, "\tDone.\n");
@@ -1503,20 +1503,20 @@ int t_consumer(){
 				fprintf(stdout, "Terminal %d.", msg.id);
 	
 				if (msg.id >= ncli) {
-					fprintf(stdout, "Nº de terminal no reconocido\n");
+					fprintf(stdout, "NÂº de terminal no reconocido\n");
 					break;
 				}
-				/********************** EJECUCIÓN DE TRANSACCIÓN *************************/
+				/********************** EJECUCIÃ“N DE TRANSACCIÃ“N *************************/
 				trans_stock_level(&msg.tran.stock_level,clientela[msg.id].shm);
 
-				/*********************	RESPUESTA DE TRANSACCIÓN**************************/
+				/*********************	RESPUESTA DE TRANSACCIÃ“N**************************/
 				/* Answer given just if the question came from same warehouse */
 				operacion.sem_num= clientela[msg.id].ident; 
-				operacion.sem_op=1;  /*abrimos el semaforo: el terminal podrá acceder a los resultados*/
+				operacion.sem_op=1;  /*abrimos el semaforo: el terminal podrÃ¡ acceder a los resultados*/
 				operacion.sem_flg=0;
 	          		if (semop(clientela[msg.id].semid, &operacion, 1) == -1){
-					/* Se ha producido un error al abrir el semáforo */
-					fprintf(stderr, "Error al abrir el semáforo\n");
+					/* Se ha producido un error al abrir el semÃ¡foro */
+					fprintf(stderr, "Error al abrir el semÃ¡foro\n");
 					fprintf(stderr, "Error: %s\n", strerror(errno));
 					break;
 				}
@@ -1530,15 +1530,15 @@ int t_consumer(){
 int main(int argc, char *argv[]){          
   
   /* ---------------------------------------------- *
-   * Función principal del programa                 *
+   * FunciÃ³n principal del programa                 *
    * ---------------------------------------------- */
   
-  void sigterm(); /* Función de tratamiento de la señal SIGTERM */
-  void ctl_c();   /* Función de tratamiento de la señal SIGINT */
+  void sigterm(); /* FunciÃ³n de tratamiento de la seÃ±al SIGTERM */
+  void ctl_c();   /* FunciÃ³n de tratamiento de la seÃ±al SIGINT */
   
-  int semid, shmid, colid; /*identificadores de semáforo, memoria compartida, y cola*/
-  key_t llave;  /*variable que contendrá las llaves para los recursos IPC*/
-  key_t ident;  /*variable que contendrá los identificadores dentro de cada llave para los recursos IPC*/
+  int semid, shmid, colid; /*identificadores de semÃ¡foro, memoria compartida, y cola*/
+  key_t llave;  /*variable que contendrÃ¡ las llaves para los recursos IPC*/
+  key_t ident;  /*variable que contendrÃ¡ los identificadores dentro de cada llave para los recursos IPC*/
 
   pthread_t t_spread_srv;
   char buf_snd[BUFSIZE];
@@ -1550,24 +1550,24 @@ int main(int argc, char *argv[]){
 	srv_id = atoi(argv[1]);
   }
 
-/* Conexión con el servidor SQL */
+/* ConexiÃ³n con el servidor SQL */
 EXEC SQL CONNECT TO tpcc; /*USER USERNAME;*/
 /*Se activa el modo autocommit para poder realizar transacciones*/
 EXEC SQL SET autocommit = ON;
 
 llave= LLAVE_COLA;     /*llave de la cola */
 
-/* Se activan las funciones de tratamiento de las señales */
-	/* Señal SIGTERM */
+/* Se activan las funciones de tratamiento de las seÃ±ales */
+	/* SeÃ±al SIGTERM */
 	if (signal (SIGTERM, sigterm) == SIG_ERR){
-		/* Error al Activar la función */
+		/* Error al Activar la funciÃ³n */
 		fprintf(stdout, "ERROR EN SIGNAL (SIGTERM)\n");
 		exit (-1);
 	}
 
-	/* Señal SIGINT */
+	/* SeÃ±al SIGINT */
 	if (signal (SIGINT, ctl_c) == SIG_ERR){
-		/* Error al Activar la función */
+		/* Error al Activar la funciÃ³n */
 		fprintf(stdout, "ERROR EN SIGNAL (SIGINT)\n");
 		exit (-1);
 	}
@@ -1578,7 +1578,7 @@ llave= LLAVE_COLA;     /*llave de la cola */
 		exit(-1);
 	}
 
-/* Se abren los ficheros de bitácora de transacciones DELIVERY */
+/* Se abren los ficheros de bitÃ¡cora de transacciones DELIVERY */
 	strcpy(filenameBuffer,VARDIR);
 	strcat(filenameBuffer,"tm_delivery_tr.log");
 	f_tr_deli=fopen(filenameBuffer,"w"); /*fichero de segistro de tiempos de respuesta*/
@@ -1587,7 +1587,7 @@ llave= LLAVE_COLA;     /*llave de la cola */
 	strcat(filenameBuffer,"tm_delivery_res.log");
 	f_res_deli=fopen(filenameBuffer,"w");  /*fichero de resultados*/
 
-/* Se abre el fichero de bitácora de errores */
+/* Se abre el fichero de bitÃ¡cora de errores */
 	strcpy(filenameBuffer,VARDIR);
 	strcat(filenameBuffer,"tm_err.log");
 	ferr = fopen(filenameBuffer, "w");
@@ -1600,7 +1600,7 @@ llave= LLAVE_COLA;     /*llave de la cola */
 	pthread_create(&t_spread_srv, NULL, (void *) t_consumer, NULL);
 	
 /* Bucle Principal */
-/*El flag 'salir' determina la permanencia en el bucle, y se modificará cuando el MT reciba la señal SIGTERM*/
+/*El flag 'salir' determina la permanencia en el bucle, y se modificarÃ¡ cuando el MT reciba la seÃ±al SIGTERM*/
 	while (salir == 0){
           fprintf(stdout, ">> ");
 	  fflush(stdout);
@@ -1612,7 +1612,7 @@ llave= LLAVE_COLA;     /*llave de la cola */
 	    switch (men.tipo){ /*Se discrimina el tipo de mensaje recibido*/
 	    case MSGTRM: /*MENSAJE DE TERMINAL*/	
 	      switch (men.tran.msgtrm.codctl){
-	      case CONECTAR:	/********CONEXIÓN DE UN NUEVO TERMINAL********/
+	      case CONECTAR:	/********CONEXIÃ“N DE UN NUEVO TERMINAL********/
 		
 		fprintf(stdout, "tm: Connection request. ");
 		if (ncli >= NUM_MAX_CLIENT){
@@ -1627,9 +1627,9 @@ llave= LLAVE_COLA;     /*llave de la cola */
 		  break;
 		}
 		
-		/*obtenemos del mensaje el identificador para el semaforo y enganchamos con él*/
+		/*obtenemos del mensaje el identificador para el semaforo y enganchamos con Ã©l*/
 		if ((semid = semget(men.tran.msgtrm.sem_llave, 10, IPC_CREAT|0600)) == -1){
-		  /* Ha habido un error al crear el semáforo */	
+		  /* Ha habido un error al crear el semÃ¡foro */	
 		  perror("tm: Error in semaphore creation");
 		  break;
 		}
@@ -1640,16 +1640,16 @@ llave= LLAVE_COLA;     /*llave de la cola */
 		
 		/*Almacenamos los identificadores en el vector de clientela*/
 		clientela[ncli].shmid= shmid; /*identificador de la memoria*/
-		clientela[ncli].semid= semid; /*identificador del semáforo*/
+		clientela[ncli].semid= semid; /*identificador del semÃ¡foro*/
 		clientela[ncli].shm=shmat(shmid,0 ,0); /* puntero a la memoria compartida*/
 		
 		/*Se escribe en la memoria compartida el identificador de terminal*/
 		clientela[ncli].shm->id=ncli;
 		
-		/*Se informa de la conexión al terminal correspondiente*/
+		/*Se informa de la conexiÃ³n al terminal correspondiente*/
 		operacion.sem_num= clientela[ncli].ident; 
-		operacion.sem_op=1;  /*Se abre el semáforo: el terminal */ 
-		operacion.sem_flg=0; /*recojerá su identificador de terminal*/
+		operacion.sem_op=1;  /*Se abre el semÃ¡foro: el terminal */ 
+		operacion.sem_flg=0; /*recojerÃ¡ su identificador de terminal*/
 		
 		if ((semop(clientela[ncli].semid, &operacion, 1))== -1){
 		  fprintf(stderr, "tm: Error in semop() call.\n");
@@ -1662,12 +1662,12 @@ llave= LLAVE_COLA;     /*llave de la cola */
 		fprintf(stdout, "SHM %d. ",clientela[ncli].shmid);
 		fprintf(stdout, "Assigned Terminal no. %d.\n", ncli);
 
-		/*Se prepara el número de identificación de terminal para una nueva conexión*/
+		/*Se prepara el nÃºmero de identificaciÃ³n de terminal para una nueva conexiÃ³n*/
 		ncli++;
 		
 		break;                     
 
-	      case DESCONECTAR: /********DESCONEXIÓN DE UN TERMINAL********/
+	      case DESCONECTAR: /********DESCONEXIÃ“N DE UN TERMINAL********/
 
 		fprintf(stdout, "Disconnecting ");
 		fprintf(stdout, "Terminal %d. ", men.id);
@@ -1678,7 +1678,7 @@ llave= LLAVE_COLA;     /*llave de la cola */
 		}
 		/*El MT se desengancha de la memoria compartida*/
 		if (shmdt(clientela[men.id].shm) == -1){
-		  /*Se ha producido un error en la desconexión con la memoria*/ 
+		  /*Se ha producido un error en la desconexiÃ³n con la memoria*/ 
 		  fprintf(stdout, "Error al desconectar la memoria\n");
 		};
 		
@@ -1686,8 +1686,8 @@ llave= LLAVE_COLA;     /*llave de la cola */
 		operacion.sem_op=1;  /*abrimos el semaforo*/
 		operacion.sem_flg=0;
 		if (semop(clientela[men.id].semid, &operacion, 1) == -1){
-		  /* Se ha producido un error al abrir el semáforo */
-		  fprintf(stdout, "Error al abrir el semáforo\n");
+		  /* Se ha producido un error al abrir el semÃ¡foro */
+		  fprintf(stdout, "Error al abrir el semÃ¡foro\n");
 		  fprintf(stdout, "Error: %s", strerror(errno));
 		  fprintf(stdout, "SEMID: %i\n",clientela[men.id].semid);
 		  fprintf(stdout, "men.id = %i\n", men.id);
@@ -1711,16 +1711,16 @@ llave= LLAVE_COLA;     /*llave de la cola */
 	  } /* de if (salir) */
 	}/*de while*/
 
-/*Se sale del bucle cuando se ha recibido la señal SIGTERM y se ha modificado el flag 'salir'*/
+/*Se sale del bucle cuando se ha recibido la seÃ±al SIGTERM y se ha modificado el flag 'salir'*/
 
 	/* Se elimina la cola de mensajes */
 	if (msgctl(colid, IPC_RMID, 0) == -1) 
 		/* Hay un problema al borrar la cola */
 		fprintf(stderr, "PROBLEMA AL BORRAR LA COLA\n");
 
-	/* Se cierran los fichero de bitácora */
-	fclose(f_tr_deli); /*fichero de tiempos de respuesta de transacción Delivery*/
-	fclose(f_res_deli); /*fichero de resultados de transacción Delivery*/
+	/* Se cierran los fichero de bitÃ¡cora */
+	fclose(f_tr_deli); /*fichero de tiempos de respuesta de transacciÃ³n Delivery*/
+	fclose(f_res_deli); /*fichero de resultados de transacciÃ³n Delivery*/
 	fclose(ferr); /*Fichero de errores*/
 
 	/* Desconecta con USERNAME */
@@ -1732,14 +1732,14 @@ llave= LLAVE_COLA;     /*llave de la cola */
 
 void sigterm(){
 /* ---------------------------------------------- *\
-|* Función de tratamiento de la señal SIGTERM     *|
+|* FunciÃ³n de tratamiento de la seÃ±al SIGTERM     *|
 |* ---------------------------------------------- *|
-|* Modifica el flag que hará que se dejen de      *|
-|* recibir transacciones cuando llege la señal    *|
+|* Modifica el flag que harÃ¡ que se dejen de      *|
+|* recibir transacciones cuando llege la seÃ±al    *|
 |* SIGTERM                                        *|
 \* ---------------------------------------------- */
 	if (signal (SIGTERM, sigterm) == SIG_ERR){
-		/* Error al Activar la función */
+		/* Error al Activar la funciÃ³n */
 		fprintf(stdout, "ERROR EN SIGNAL (SIGTERM)\n");
 		exit (-1);
 	}
@@ -1750,14 +1750,14 @@ void sigterm(){
 
 void ctl_c(){
 /* ---------------------------------------------- *\
-|* Función de tratamiento de la señal SIGINT      *|
+|* FunciÃ³n de tratamiento de la seÃ±al SIGINT      *|
 |* ---------------------------------------------- *|
-|* No realiza ninguna función. Su función en que  *|
+|* No realiza ninguna funciÃ³n. Su funciÃ³n en que  *|
 |* el MT no se vea afectado por el ctrl-c         *|
 |* que introduce el usuario para parar el test.   *|
 \* ---------------------------------------------- */ 
 	if (signal (SIGINT, ctl_c) == SIG_ERR){
-		/* Error al Activar la función */
+		/* Error al Activar la funciÃ³n */
 		fprintf(stdout, "ERROR EN SIGNAL (SIGINT)\n");
 		exit (-1);
 	}

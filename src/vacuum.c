@@ -174,7 +174,7 @@ main (int argc, char *argv[])
 		 ftime (&sello2);
 
 		 /* Writing timestamps */
-		 fprintf (vacu, "1บ sello %d %d 2บ sello %d %d \n",
+		 fprintf (vacu, "1ยบ sello %d %d 2ยบ sello %d %d \n",
 			  sello1.time, sello1.millitm, sello2.time,
 			  sello2.millitm);
 

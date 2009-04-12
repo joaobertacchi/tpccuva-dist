@@ -36,13 +36,13 @@
 |* -----------------------------------------------------------------*|
 |* Simulas las funciones de un usuario emulado. Realiza las funcnes *| 
 |* de terminal remoto. Genera transacciones, con sus datos          *|
-|* correspondientes, y las envÌa al Monitor de Transacciones.       *|
-|* Registra los tiempos de respuesta en un fichero de bit·cora.     *|
+|* correspondientes, y las env√≠a al Monitor de Transacciones.       *|
+|* Registra los tiempos de respuesta en un fichero de bit√°cora.     *|
 |* ---------------------------------------------------------------- *|
-|* El ETR se conecta con el MT mediante un mensaje de conexiÛn      *|
-|* pas·ndole la llave del sem·foro y de la memoria compartida. A    *|
-|* A continuaciÛn el ETR envÌa transacciones. El ETR se desconecta  *|
-|* del MT mediante un mensaje de desconexiÛn.                       *|
+|* El ETR se conecta con el MT mediante un mensaje de conexi√≥n      *|
+|* pas√°ndole la llave del sem√°foro y de la memoria compartida. A    *|
+|* A continuaci√≥n el ETR env√≠a transacciones. El ETR se desconecta  *|
+|* del MT mediante un mensaje de desconexi√≥n.                       *|
 \********************************************************************/
 
 /********************************************************************\
@@ -71,10 +71,10 @@
 /********************************************************************/
 
 /*               Constants for the  vectores de estado                   */
-	/*Vector de estado para la selecciÛn de transacciones */
+	/*Vector de estado para la selecci√≥n de transacciones */
 #define E_TRAN 0
 
-	/*Vectores de estado para la transacciÛn New-Order */
+	/*Vectores de estado para la transacci√≥n New-Order */
 #define E_NO_D_ID 1
 #define E_NO_C_ID 2
 #define E_NO_A_C_ID 3
@@ -86,7 +86,7 @@
 #define E_NO_R_W 9
 #define E_NO_OL_QUAN 10
 
-	/*Vectores de estado para la transacciÛn Payment */
+	/*Vectores de estado para la transacci√≥n Payment */
 #define E_P_D_ID 11
 #define E_P_SELEC 12
 #define E_P_C_LAST 13
@@ -98,7 +98,7 @@
 #define E_P_C_D_ID 19
 #define E_P_H_AMOUNT 20
 
-	/*Vectores de estado para la transacciÛn Order-Status */
+	/*Vectores de estado para la transacci√≥n Order-Status */
 #define E_OS_D_ID 21
 #define E_OS_SELEC 22
 #define E_OS_C_LAST 23
@@ -106,10 +106,10 @@
 #define E_OS_C_ID 25
 #define E_OS_A_C_ID 26
 
-	/*Vectores de estado para la transacciÛn Delivery */
+	/*Vectores de estado para la transacci√≥n Delivery */
 #define E_D_O_CARR 27
 
-	/*Vectores de estado para la transacciÛn Stock-Level */
+	/*Vectores de estado para la transacci√≥n Stock-Level */
 #define E_SL_THR 28
 
 	/*Vectores de estado para los Tiempos de Pensar */
@@ -123,33 +123,33 @@
 |* Global variables.                                                *|
 \* ---------------------------------------------------------------- */
 char estado[50][32];		/*Vectores de apuntadores a vectores de estado */
-char e_global[32];		/*Vector de estado genÈrico                    */
+char e_global[32];		/*Vector de estado gen√©rico                    */
 
-int C_C_LAST;			/*Variable para la generaciÛn de c_last        */
-int C_C_ID;			/*Variable para la generaciÛn de c_id          */
-int C_OL_I_ID;			/*Variable para la generaciÛn de c_ol_i_id     */
+int C_C_LAST;			/*Variable para la generaci√≥n de c_last        */
+int C_C_ID;			/*Variable para la generaci√≥n de c_id          */
+int C_OL_I_ID;			/*Variable para la generaci√≥n de c_ol_i_id     */
 char entrada[20];		/*Cadena de caracteres para los datos generados */
 
 
-struct mensaje men;		/*Estructura de mensaje que el ETR envÌa el MT  */
+struct mensaje men;		/*Estructura de mensaje que el ETR env√≠a el MT  */
 
 FILE *out;			/*Puntero para el fichero de salidas por pantalla */
-FILE *flog;			/*Puntero al fichero de bit·cora                */
+FILE *flog;			/*Puntero al fichero de bit√°cora                */
 FILE *fcons;			/*Puntero al fichero de constantes              */
 int i;
-int semid, shmid, colid;	/*Identificadores de memoria, sem·foro y cola */
+int semid, shmid, colid;	/*Identificadores de memoria, sem√°foro y cola */
 int cod_term;			/*Identificadoe de terminal                */
 int tipo;			/*Tipo de mensaje                          */
-int semilla;			/*Smilla para la generaciÛn de n˙meros     */
+int semilla;			/*Smilla para la generaci√≥n de n√∫meros     */
 			 /*aleatorios                               */
-int ol_cnt;			/*N˙mero de artÌculos por orden                 */
-int w_id, d_id;			/*Identificadores de almacÈn y de distrito      */
-int art_remoto;			/*N˙mero de artÌculos remotos                   */
-int paym_remota;		/*Indicador de transacciÛn payment remota       */
+int ol_cnt;			/*N√∫mero de art√≠culos por orden                 */
+int w_id, d_id;			/*Identificadores de almac√©n y de distrito      */
+int art_remoto;			/*N√∫mero de art√≠culos remotos                   */
+int paym_remota;		/*Indicador de transacci√≥n payment remota       */
 int clien_paym;			/*Indicador de modo de seleccion de cliente en  */
-		    /* la transacciÛn payment                       */
+		    /* la transacci√≥n payment                       */
 int clien_os;			/*Indicador de modo de seleccion de cliente en  */
-		    /*la transacciÛn order_status                   */
+		    /*la transacci√≥n order_status                   */
 key_t llave;			/*Variable para almacenar llaves                */
 int flag = 0;			/*Determina la permanencia en el bucle de       */
 		    /*eleccion de transacciones                     */
@@ -161,16 +161,16 @@ int
 aleat_tpensar (int media, char *estado)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn de c·lculo del tiempo de pensar        *|
+|* Funci√≥n de c√°lculo del tiempo de pensar        *|
 |* ---------------------------------------------- *|
-|* Genera el tiempo de pensar del ETR seg˙n las   *|
-|* especificaciones de la cl·usula 5.2.5.4 del    *|
+|* Genera el tiempo de pensar del ETR seg√∫n las   *|
+|* especificaciones de la cl√°usula 5.2.5.4 del    *|
 |* TPC-C                                          *|
 |* ---------------------------------------------- *|
-|* Par·metro media: media de la distribuciÛn      *|
-|* aleatÛria                                      *|
-|* Par·metro estado: vector de estado asignado a  *|
-|* la variable aleatÛria                          *|
+|* Par√°metro media: media de la distribuci√≥n      *|
+|* aleat√≥ria                                      *|
+|* Par√°metro estado: vector de estado asignado a  *|
+|* la variable aleat√≥ria                          *|
 \* ---------------------------------------------- */
 
 
@@ -198,32 +198,32 @@ void
 genera_datos_new_order (int w, struct tnew_order_men *new_order)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn de generaciÛn de datos de transacciÛn  *|
+|* Funci√≥n de generaci√≥n de datos de transacci√≥n  *|
 |* New-Order                                      *|
 |* ---------------------------------------------- *|
-|* Genera los datos de transacciÛn seg˙n la       *|
-|* cl·usula 2.4 del TPC-C                         *|
+|* Genera los datos de transacci√≥n seg√∫n la       *|
+|* cl√°usula 2.4 del TPC-C                         *|
 |* ---------------------------------------------- *|
-|* Par·metro w: numero de almacenes.              *|
-|* Par·metro new_order: puntero a la estructura   *|
+|* Par√°metro w: numero de almacenes.              *|
+|* Par√°metro new_order: puntero a la estructura   *|
 |* de mensaje donde se almacenan los datos        *|
 |* generados.                                     *|
 \* ---------------------------------------------- */
 
   int i, x, y, rbk;		/*variables auxiliares            */
 
-  new_order->w_id = w_id;	/*almecÈn del terminal    */
+  new_order->w_id = w_id;	/*almec√©n del terminal    */
 
-  setstate (estado[E_NO_D_ID]);	/*se fija el estado para la generaciÛn de no_d_id */
+  setstate (estado[E_NO_D_ID]);	/*se fija el estado para la generaci√≥n de no_d_id */
 
-  art_remoto = 0;		/*se inicializa el n˙mero de artÌculos remotos */
+  art_remoto = 0;		/*se inicializa el n√∫mero de art√≠culos remotos */
 
 /* Seleccion del distrito */
   do
      {
        sprintf (entrada, "%d\n", aleat_int (1, 10));
      }
-  while (!es_entero (entrada));	/*ValidaciÛn de dato generado */
+  while (!es_entero (entrada));	/*Validaci√≥n de dato generado */
 
   sscanf (entrada, "%d\n", &new_order->d_id);	/*se escribe el dato generado en la estructura de mensaje */
 
@@ -234,30 +234,30 @@ genera_datos_new_order (int w, struct tnew_order_men *new_order)
 		nurand (1023, 1, NUM_CLIENT, C_C_ID, estado[E_NO_C_ID],
 			estado[E_NO_A_C_ID]));
      }
-  while (!es_entero (entrada));	/*ValidaciÛn de dato generado */
+  while (!es_entero (entrada));	/*Validaci√≥n de dato generado */
   sscanf (entrada, "%d\n", &new_order->c_id);
 
-/*GeneraciÛn del n˙mero de artÌculos para la orden*/
+/*Generaci√≥n del n√∫mero de art√≠culos para la orden*/
   setstate (estado[E_NO_OL_CNT]);
   ol_cnt = (int) aleat_int (5, 15);
 
-/*Se ponen a cero los flag que indican le presencia de artÌculos en el vector*/
+/*Se ponen a cero los flag que indican le presencia de art√≠culos en el vector*/
   for (i = 0; i < 15; i++)
     new_order->item[i].flag = 0;
 
-/*GeneraciÛn de datos de cada artÌculo*/
+/*Generaci√≥n de datos de cada art√≠culo*/
   for (i = 0; i < ol_cnt; i++)
      {
 
-       /*Se decide si el artÌculo ha de inv·lido en el 1% de los casos */
+       /*Se decide si el art√≠culo ha de inv√°lido en el 1% de los casos */
        setstate (estado[E_NO_RBK]);
        rbk = (int) aleat_int (1, 100);
-       new_order->item[i].flag = 1;	/*presencia de artÌculo */
+       new_order->item[i].flag = 1;	/*presencia de art√≠culo */
        if (i == ol_cnt - 1)
-	  {			/*si es el ˙ltimo artÌculo se mira si es inv·lido */
+	  {			/*si es el √∫ltimo art√≠culo se mira si es inv√°lido */
 	    if (rbk == 20)
 	       {
-		 /*artÌculo no usado */
+		 /*art√≠culo no usado */
 		 do
 		    {
 		      sprintf (entrada, "%d\n", ART_UNUSED);
@@ -266,10 +266,10 @@ genera_datos_new_order (int w, struct tnew_order_men *new_order)
 		 sscanf (entrada, "%d\n", &new_order->item[i].ol_i_id);
 	       }
 	    else
-	       {		/*artÌculo v·lido */
+	       {		/*art√≠culo v√°lido */
 		 do
 		    {
-		      /*se genera el n˙mero de artÌculo */
+		      /*se genera el n√∫mero de art√≠culo */
 		      sprintf (entrada, "%d\n",
 			       nurand (8191, 1, NUM_ART, C_OL_I_ID,
 				       estado[E_NO_OL_I_ID],
@@ -280,26 +280,26 @@ genera_datos_new_order (int w, struct tnew_order_men *new_order)
 	       }
 	  }
        else
-	  {			/*no es el ˙ltimo artÌculo de la orden */
+	  {			/*no es el √∫ltimo art√≠culo de la orden */
 	    do
 	       {
-		 /*Se genera el n˙mero del artÌculo */
+		 /*Se genera el n√∫mero del art√≠culo */
 		 sprintf (entrada, "%d\n",
 			  nurand (8191, 1, NUM_ART, C_OL_I_ID,
 				  estado[E_NO_OL_I_ID],
 				  estado[E_NO_A_OL_I_ID]));
 	       }
-	    while (!es_entero (entrada));	/*Se valida el n˙mero generado */
+	    while (!es_entero (entrada));	/*Se valida el n√∫mero generado */
 	    sscanf (entrada, "%d\n", &new_order->item[i].ol_i_id);	/*Se escribe el dato */
 	  }
 
-       /*SelecciÛn de ol_supply_w_id: 99% local; 1% remoto */
+       /*Selecci√≥n de ol_supply_w_id: 99% local; 1% remoto */
        if (w != 1)
-	  {			/*si hay mas de un almacÈn */
+	  {			/*si hay mas de un almac√©n */
 	    setstate (estado[E_NO_LOCAL]);
 	    x = (int) aleat_int (1, 100);
 	    if (x > 1)
-	       {		/*almacÈn local */
+	       {		/*almac√©n local */
 		 do
 		    {
 		      sprintf (entrada, "%d\n", w_id);	/*se genera el dato */
@@ -309,7 +309,7 @@ genera_datos_new_order (int w, struct tnew_order_men *new_order)
 		 sscanf (entrada, "%d\n", &new_order->item[i].ol_supply_w_id);
 	       }
 	    else
-	       {		/*almacÈn remoto */
+	       {		/*almac√©n remoto */
 		 /*Se selecciona uno de los almacenes restantes */
 		 setstate (estado[E_NO_R_W]);
 		 y = (int) aleat_int (1, w - 1);
@@ -321,11 +321,11 @@ genera_datos_new_order (int w, struct tnew_order_men *new_order)
 		    }
 		 while (!es_entero (entrada));
 		 sscanf (entrada, "%d\n", &new_order->item[i].ol_supply_w_id);
-		 art_remoto++;	/*incrementamos el recuento de artÌculos remotos */
+		 art_remoto++;	/*incrementamos el recuento de art√≠culos remotos */
 	       }
 	  }
        else
-	  {			/*sÛlo hay un almacÈn */
+	  {			/*s√≥lo hay un almac√©n */
 	    do
 	       {
 		 sprintf (entrada, "%d\n", 1);
@@ -334,7 +334,7 @@ genera_datos_new_order (int w, struct tnew_order_men *new_order)
 	    sscanf (entrada, "%d\n", &new_order->item[i].ol_supply_w_id);	/*Se escribe el dato */
 	  }
 
-       /*GeneraciÛn de ol_quantity */
+       /*Generaci√≥n de ol_quantity */
        setstate (estado[E_NO_OL_QUAN]);
        do
 	  {
@@ -349,14 +349,14 @@ void
 genera_datos_payment (int w, struct tpayment_men *payment)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn de generaciÛn de datos de transacciÛn  *|
+|* Funci√≥n de generaci√≥n de datos de transacci√≥n  *|
 |* Payment                                        *|
 |* ---------------------------------------------- *|
-|* Genera los datos de transacciÛn seg˙n la       *|
-|* cl·usula 2.5 del TPC-C                         *|
+|* Genera los datos de transacci√≥n seg√∫n la       *|
+|* cl√°usula 2.5 del TPC-C                         *|
 |* ---------------------------------------------- *|
-|* Par·metro w: numero de almacenes.              *|
-|* Par·metro payment: puntero a la estructura     *|
+|* Par√°metro w: numero de almacenes.              *|
+|* Par√°metro payment: puntero a la estructura     *|
 |* de mensaje donde se almacenan los datos        *|
 |* generados.                                     *|
 \* ---------------------------------------------- */
@@ -407,14 +407,14 @@ genera_datos_payment (int w, struct tpayment_men *payment)
        while (!es_entero (entrada));
        sscanf (entrada, "%d\n", &payment->c_id);
        payment->c_last[0] = '\0';	/*Se indica que se ha seleccionado por c_id */
-       clien_paym = 1;		/*Se indica que la transacciÛn se ha seleccionado por c_id */
+       clien_paym = 1;		/*Se indica que la transacci√≥n se ha seleccionado por c_id */
      }				/*de else */
 
-/*Se determina si la transacciÛn es local o remota*/
+/*Se determina si la transacci√≥n es local o remota*/
   setstate (estado[E_P_LOCAL]);
   x = aleat_int (1, 100);
   if (x <= 85)
-     {				/*almacÈn local */
+     {				/*almac√©n local */
        do
 	  {
 	    sprintf (entrada, "%d\n", payment->w_id);
@@ -429,9 +429,9 @@ genera_datos_payment (int w, struct tpayment_men *payment)
        sscanf (entrada, "%d\n", &payment->c_d_id);
      }
   else
-     {				/*almacÈn remoto */
+     {				/*almac√©n remoto */
        if (w > 1)
-	  {			/*Si hay mas de un almacÈn se selecciona uno de los restantes */
+	  {			/*Si hay mas de un almac√©n se selecciona uno de los restantes */
 	    setstate (estado[E_P_R_W]);
 	    x = (int) aleat_int (1, w - 1);
 	    if (x == w_id)
@@ -439,9 +439,9 @@ genera_datos_payment (int w, struct tpayment_men *payment)
 	    paym_remota = 1;
 	  }
        else
-	 x = 1;			/*Si sÛlo hay un almacÈn se asigna el primero */
+	 x = 1;			/*Si s√≥lo hay un almac√©n se asigna el primero */
 
-       /*almacÈn del cliente */
+       /*almac√©n del cliente */
        do
 	  {
 	    sprintf (entrada, "%d\n", x);
@@ -459,7 +459,7 @@ genera_datos_payment (int w, struct tpayment_men *payment)
        sscanf (entrada, "%d\n", &payment->c_d_id);
      }				/*de else */
 
-/*GeneraciÛn de h_amount*/
+/*Generaci√≥n de h_amount*/
   setstate (estado[E_P_H_AMOUNT]);
   do
      {
@@ -474,14 +474,14 @@ genera_datos_order_status (int w, struct torder_status_men *ostatus)
 {
 
 /* ---------------------------------------------- *\
-|* FunciÛn de generaciÛn de datos de transacciÛn  *|
+|* Funci√≥n de generaci√≥n de datos de transacci√≥n  *|
 |* Order-Status                                   *|
 |* ---------------------------------------------- *|
-|* Genera los datos de transacciÛn seg˙n la       *|
-|* cl·usula 2.6 del TPC-C                         *|
+|* Genera los datos de transacci√≥n seg√∫n la       *|
+|* cl√°usula 2.6 del TPC-C                         *|
 |* ---------------------------------------------- *|
-|* Par·metro w: numero de almacenes.              *|
-|* Par·metro ostatus: puntero a la estructura     *|
+|* Par√°metro w: numero de almacenes.              *|
+|* Par√°metro ostatus: puntero a la estructura     *|
 |* de mensaje donde se almacenan los datos        *|
 |* generados.                                     *|
 \* ---------------------------------------------- */
@@ -489,9 +489,9 @@ genera_datos_order_status (int w, struct torder_status_men *ostatus)
   int x;			/*variable auxiliar */
   char cad[20];
 
-  clien_os = 0;			/*al modo de selecciÛn de cliente se inicializa a 0 */
+  clien_os = 0;			/*al modo de selecci√≥n de cliente se inicializa a 0 */
   ostatus->w_id = w_id;		/*se asigna el terminal del cliente */
-/*Se genera el n˙mero de distrito*/
+/*Se genera el n√∫mero de distrito*/
   setstate (estado[E_OS_D_ID]);
   do
      {
@@ -504,7 +504,7 @@ genera_datos_order_status (int w, struct torder_status_men *ostatus)
   setstate (estado[E_OS_SELEC]);
   x = aleat_int (1, 100);
   if (x <= 60)
-     {				/*selecciÛn de cliente por c_last */
+     {				/*selecci√≥n de cliente por c_last */
        do
 	  {			/*Se genera c_last */
 	    crea_clast (nurand
@@ -517,7 +517,7 @@ genera_datos_order_status (int w, struct torder_status_men *ostatus)
        ostatus->c_id = 0;
      }
   else
-     {				/*selecciÛn de cliente por c_id */
+     {				/*selecci√≥n de cliente por c_id */
        do
 	  {			/*se genera c_id */
 	    sprintf (entrada, "%d\n",
@@ -534,19 +534,19 @@ void
 genera_datos_stock_level (int w, struct tstock_level_men *stock_level)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn de generaciÛn de datos de transacciÛn  *|
+|* Funci√≥n de generaci√≥n de datos de transacci√≥n  *|
 |* Stock-Level                                    *|
 |* ---------------------------------------------- *|
-|* Genera los datos de transacciÛn seg˙n la       *|
-|* cl·usula 2.8 del TPC-C                         *|
+|* Genera los datos de transacci√≥n seg√∫n la       *|
+|* cl√°usula 2.8 del TPC-C                         *|
 |* ---------------------------------------------- *|
-|* Par·metro w: numero de almacenes.              *|
-|* Par·metro stock_level: puntero a la estructura *|
+|* Par√°metro w: numero de almacenes.              *|
+|* Par√°metro stock_level: puntero a la estructura *|
 |* de mensaje donde se almacenan los datos        *|
 |* generados.                                     *|
 \* ---------------------------------------------- */
 
-  stock_level->w_id = w_id;	/*almacÈn del terminal */
+  stock_level->w_id = w_id;	/*almac√©n del terminal */
   stock_level->d_id = d_id;	/*distrito del terminal */
 
 /*se genera el umbral*/
@@ -563,19 +563,19 @@ void
 genera_datos_delivery (int w, struct tdelivery_men *delivery)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn de generaciÛn de datos de transacciÛn  *|
+|* Funci√≥n de generaci√≥n de datos de transacci√≥n  *|
 |* Delivery                                       *|
 |* ---------------------------------------------- *|
-|* Genera los datos de transacciÛn seg˙n la       *|
-|* cl·usula 2.7 del TPC-C                         *|
+|* Genera los datos de transacci√≥n seg√∫n la       *|
+|* cl√°usula 2.7 del TPC-C                         *|
 |* ---------------------------------------------- *|
-|* Par·metro w: numero de almacenes.              *|
-|* Par·metro delivery: puntero a la estructura    *|
+|* Par√°metro w: numero de almacenes.              *|
+|* Par√°metro delivery: puntero a la estructura    *|
 |* de mensaje donde se almacenan los datos        *|
 |* generados.                                     *|
 \* ---------------------------------------------- */
 
-  delivery->w_id = w_id;	/*almacÈn del terminal  */
+  delivery->w_id = w_id;	/*almac√©n del terminal  */
   delivery->d_id = d_id;	/*distrito del terminal */
 
 /*Se genera o_carrier_id*/
@@ -592,9 +592,9 @@ void
 pant_new_order_pet ()
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que muentra la pantalla de peticiÛn de *|
-|* datos de la transacciÛn New-Order, seg˙n la    *|
-|* c·usula 2.4 del TPC-C.                         *|
+|* Funci√≥n que muentra la pantalla de petici√≥n de *|
+|* datos de la transacci√≥n New-Order, seg√∫n la    *|
+|* c√°usula 2.4 del TPC-C.                         *|
 \* ---------------------------------------------- */
 
   int i;
@@ -628,12 +628,12 @@ void
 pant_new_order_muest (struct tnew_order_men *new_order)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que muestra la pantalla de muestra de  *|
-|* de datos generados de la transacciÛn New-Order,*|
-|* seg˙n la cl·usula 2.4 del TPC-C                *|
+|* Funci√≥n que muestra la pantalla de muestra de  *|
+|* de datos generados de la transacci√≥n New-Order,*|
+|* seg√∫n la cl√°usula 2.4 del TPC-C                *|
 |* ---------------------------------------------- *|
-|* Par·metro new_order: puntero a la estructura de*|
-|* datos de transacciÛn generados                 *|
+|* Par√°metro new_order: puntero a la estructura de*|
+|* datos de transacci√≥n generados                 *|
 \* ---------------------------------------------- */
 
   int i;
@@ -676,16 +676,16 @@ void
 pant_new_order_menu (struct tnew_order_men *new_order)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que muestra la pantalla de resultados  *|
-|* de la transacciÛn New-Order, y muestra el men˙ *|
-|* de selecciÛn de la siguiente transacciÛn, seg˙n*|
-|* la cl·usula 2.4 del TPC-C.                     *|
+|* Funci√≥n que muestra la pantalla de resultados  *|
+|* de la transacci√≥n New-Order, y muestra el men√∫ *|
+|* de selecci√≥n de la siguiente transacci√≥n, seg√∫n*|
+|* la cl√°usula 2.4 del TPC-C.                     *|
 |* ---------------------------------------------- *|
-|* La funciÛn lee de la memoria compartida los    *|
-|* los resultados de la transacciÛn               *|
+|* La funci√≥n lee de la memoria compartida los    *|
+|* los resultados de la transacci√≥n               *|
 |* ---------------------------------------------- *|
-|* Par·metro new_order: puntero a la estructura de*|
-|* datos de transacciÛn generados                 *|
+|* Par√°metro new_order: puntero a la estructura de*|
+|* datos de transacci√≥n generados                 *|
 \* ---------------------------------------------- */
 
   int i;
@@ -713,7 +713,7 @@ pant_new_order_menu (struct tnew_order_men *new_order)
 		" Supp_W  Item_Id  Item Name%17cQty  Stock  B/G   Price    Amount\n",
 		32);
 
-       /*Para cada uno de los ol_cnt artÌculos */
+       /*Para cada uno de los ol_cnt art√≠culos */
        for (i = 0; i < 15; i++)
 	  {
 	    if (new_order->item[i].flag == 1)
@@ -783,9 +783,9 @@ void
 pant_payment_pet ()
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que muentra la pantalla de peticiÛn de *|
-|* datos de la transacciÛn Payment, seg˙n la      *|
-|* c·usula 2.5 del TPC-C.                         *|
+|* Funci√≥n que muentra la pantalla de petici√≥n de *|
+|* datos de la transacci√≥n Payment, seg√∫n la      *|
+|* c√°usula 2.5 del TPC-C.                         *|
 \* ---------------------------------------------- */
   fprintf (out, "%35cPayment\n", 32);
   fprintf (out, "Date: YYYY-MM-DD hh:mm:ss\n\n");
@@ -826,12 +826,12 @@ void
 pant_payment_muest (struct tpayment_men *payment)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que muestra la pantalla de muestra de  *|
-|* de datos generados de la transacciÛn Payment,  *|
-|* seg˙n la cl·usula 2.5 del TPC-C.               *|
+|* Funci√≥n que muestra la pantalla de muestra de  *|
+|* de datos generados de la transacci√≥n Payment,  *|
+|* seg√∫n la cl√°usula 2.5 del TPC-C.               *|
 |* ---------------------------------------------- *|
-|* Par·metro payment: puntero a la estructura de  *|
-|* datos de transacciÛn generados.                *|
+|* Par√°metro payment: puntero a la estructura de  *|
+|* datos de transacci√≥n generados.                *|
 \* ---------------------------------------------- */
   fprintf (out, "%35cPayment\n", 32);
   fprintf (out, "Date: YYYY-MM-DD hh:mm:ss\n\n");
@@ -890,16 +890,16 @@ void
 pant_payment_menu (struct tpayment_men *payment)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que muestra la pantalla de resultados  *|
-|* de la transacciÛn New-Order, y muestra el men˙ *|
-|* de selecciÛn de la siguiente transacciÛn, seg˙n*|
-|* la cl·usula 2.5 del TPC-C.                     *|
+|* Funci√≥n que muestra la pantalla de resultados  *|
+|* de la transacci√≥n New-Order, y muestra el men√∫ *|
+|* de selecci√≥n de la siguiente transacci√≥n, seg√∫n*|
+|* la cl√°usula 2.5 del TPC-C.                     *|
 |* ---------------------------------------------- *|
-|* La funciÛn lee de la memoria compartida los    *|
-|* los resultados de la transacciÛn.              *|
+|* La funci√≥n lee de la memoria compartida los    *|
+|* los resultados de la transacci√≥n.              *|
 |* ---------------------------------------------- *|
-|* Par·metro payment: puntero a la estructura de  *|
-|* datos de transacciÛn generados                 *|
+|* Par√°metro payment: puntero a la estructura de  *|
+|* datos de transacci√≥n generados                 *|
 \* ---------------------------------------------- */
   int i, l;
   fprintf (out, "%35cPayment\n", 32);
@@ -986,9 +986,9 @@ void
 pant_ostatus_pet ()
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que muentra la pantalla de peticiÛn de *|
-|* datos de la transacciÛn Order-Status, seg˙n la *|
-|* c·usula 2.6 del TPC-C.                         *|
+|* Funci√≥n que muentra la pantalla de petici√≥n de *|
+|* datos de la transacci√≥n Order-Status, seg√∫n la *|
+|* c√°usula 2.6 del TPC-C.                         *|
 \* ---------------------------------------------- */
 
   int i;
@@ -1016,12 +1016,12 @@ void
 pant_ostatus_muest (struct torder_status_men *ostatus)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que muestra la pantalla de muestra de  *|
-|* de datos generados de la transacciÛn           *|
-|* Order-Status seg˙n la cl·usula 2.6 del TPC-C.  *|
+|* Funci√≥n que muestra la pantalla de muestra de  *|
+|* de datos generados de la transacci√≥n           *|
+|* Order-Status seg√∫n la cl√°usula 2.6 del TPC-C.  *|
 |* ---------------------------------------------- *|
-|* Par·metro ostatus: puntero a la estructura de  *|
-|* datos de transacciÛn generados.                *|
+|* Par√°metro ostatus: puntero a la estructura de  *|
+|* datos de transacci√≥n generados.                *|
 \* ---------------------------------------------- */
 
   int i;
@@ -1055,16 +1055,16 @@ void
 pant_ostatus_menu (struct torder_status_men *ostatus)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que muestra la pantalla de resultados  *|
-|* de la transacciÛn Order-Status, y muestra el   *|
-|* men˙ de selecciÛn de la siguiente transacciÛn, *|
-|* seg˙n la cl·usula 2.6 del TPC-C.               *|
+|* Funci√≥n que muestra la pantalla de resultados  *|
+|* de la transacci√≥n Order-Status, y muestra el   *|
+|* men√∫ de selecci√≥n de la siguiente transacci√≥n, *|
+|* seg√∫n la cl√°usula 2.6 del TPC-C.               *|
 |* ---------------------------------------------- *|
-|* La funciÛn lee de la memoria compartida los    *|
-|* los resultados de la transacciÛn               *|
+|* La funci√≥n lee de la memoria compartida los    *|
+|* los resultados de la transacci√≥n               *|
 |* ---------------------------------------------- *|
-|* Par·metro ostatus: puntero a la estructura de  *|
-|* datos de transacciÛn generados.                *|
+|* Par√°metro ostatus: puntero a la estructura de  *|
+|* datos de transacci√≥n generados.                *|
 \* ---------------------------------------------- */
 
   int i;
@@ -1114,9 +1114,9 @@ void
 pant_delivery_pet ()
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que muentra la pantalla de peticiÛn de *|
-|* datos de la transacciÛn Delivery, seg˙n la     *|
-|* c·usula 2.7 del TPC-C.                         *|
+|* Funci√≥n que muentra la pantalla de petici√≥n de *|
+|* datos de la transacci√≥n Delivery, seg√∫n la     *|
+|* c√°usula 2.7 del TPC-C.                         *|
 \* ---------------------------------------------- */
   fprintf (out, "%36cDelivery\n", 32);
   fprintf (out, "Warehouse: %4d\n\n", w_id);
@@ -1133,12 +1133,12 @@ void
 pant_delivery_muest (struct tdelivery_men *delivery)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que muestra la pantalla de datos       *|
-|* generados de la transacciÛn Payment, seg˙n la  *|
-|* cl·usula 2.7 del TPC-C.                        *|
+|* Funci√≥n que muestra la pantalla de datos       *|
+|* generados de la transacci√≥n Payment, seg√∫n la  *|
+|* cl√°usula 2.7 del TPC-C.                        *|
 |* ---------------------------------------------- *|
-|* Par·metro payment: puntero a la estructura de  *|
-|* datos de transacciÛn generados.                *|
+|* Par√°metro payment: puntero a la estructura de  *|
+|* datos de transacci√≥n generados.                *|
 \* ---------------------------------------------- */
   fprintf (out, "%36cDelivery\n", 32);
   fprintf (out, "Warehouse: %4d\n\n", delivery->w_id);
@@ -1155,16 +1155,16 @@ void
 pant_delivery_menu (struct tdelivery_men *delivery)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que muestra la pantalla de resultados  *|
-|* de la transacciÛn Delivery, y muestra el       *|
-|* men˙ de selecciÛn de la siguiente transacciÛn, *|
-|* seg˙n la cl·usula 2.7 del TPC-C.               *|
+|* Funci√≥n que muestra la pantalla de resultados  *|
+|* de la transacci√≥n Delivery, y muestra el       *|
+|* men√∫ de selecci√≥n de la siguiente transacci√≥n, *|
+|* seg√∫n la cl√°usula 2.7 del TPC-C.               *|
 |* ---------------------------------------------- *|
-|* La funciÛn lee de la memoria compartida los    *|
-|* los resultados de la transacciÛn               *|
+|* La funci√≥n lee de la memoria compartida los    *|
+|* los resultados de la transacci√≥n               *|
 |* ---------------------------------------------- *|
-|* Par·metro delivery: puntero a la estructura de *|
-|* datos de transacciÛn generados.                *|
+|* Par√°metro delivery: puntero a la estructura de *|
+|* datos de transacci√≥n generados.                *|
 \* ---------------------------------------------- */
 
   fprintf (out, "%36cDelivery\n", 32);
@@ -1182,9 +1182,9 @@ void
 pant_stock_level_pet ()
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que muentra la pantalla de peticiÛn de *|
-|* datos de la transacciÛn Stock-Level, seg˙n la  *|
-|* c·usula 2.8 del TPC-C.                         *|
+|* Funci√≥n que muentra la pantalla de petici√≥n de *|
+|* datos de la transacci√≥n Stock-Level, seg√∫n la  *|
+|* c√°usula 2.8 del TPC-C.                         *|
 \* ---------------------------------------------- */
   fprintf (out, "%33cStock-Level\n", 32);
   fprintf (out, "Warehouse: %4d    District: %2d\n\n", w_id, d_id);
@@ -1200,12 +1200,12 @@ void
 pant_stock_level_muest (struct tstock_level_men *stock_level)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que muestra la pantalla de datos       *|
-|* generados de la transacciÛn Payment, seg˙n la  *|
-|* cl·usula 2.8 del TPC-C.                        *|
+|* Funci√≥n que muestra la pantalla de datos       *|
+|* generados de la transacci√≥n Payment, seg√∫n la  *|
+|* cl√°usula 2.8 del TPC-C.                        *|
 |* ---------------------------------------------- *|
-|* Par·metro payment: puntero a la estructura de  *|
-|* datos de transacciÛn generados.                *|
+|* Par√°metro payment: puntero a la estructura de  *|
+|* datos de transacci√≥n generados.                *|
 \* ---------------------------------------------- */
   fprintf (out, "%33cStock-Level\n", 32);
   fprintf (out, "Warehouse: %4d    District: %2d\n\n", stock_level->w_id,
@@ -1223,16 +1223,16 @@ void
 pant_stock_level_menu (struct tstock_level_men *stock_level)
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que muestra la pantalla de resultados  *|
-|* de la transacciÛn Stock-Level, y muestra el    *|
-|* men˙ de selecciÛn de la siguiente transacciÛn, *|
-|* seg˙n la cl·usula 2.8 del TPC-C.               *|
+|* Funci√≥n que muestra la pantalla de resultados  *|
+|* de la transacci√≥n Stock-Level, y muestra el    *|
+|* men√∫ de selecci√≥n de la siguiente transacci√≥n, *|
+|* seg√∫n la cl√°usula 2.8 del TPC-C.               *|
 |* ---------------------------------------------- *|
-|* La funciÛn lee de la memoria compartida los    *|
-|* los resultados de la transacciÛn               *|
+|* La funci√≥n lee de la memoria compartida los    *|
+|* los resultados de la transacci√≥n               *|
 |* ---------------------------------------------- *|
-|* Par·metro stock_level: puntero a la estructura *|
-|* de datos de transacciÛn generados.             *|
+|* Par√°metro stock_level: puntero a la estructura *|
+|* de datos de transacci√≥n generados.             *|
 \* ---------------------------------------------- */
 
   fprintf (out, "%33cStock-Level\n", 32);
@@ -1252,7 +1252,7 @@ void
 leyenda ()
 {
 /* ---------------------------------------------- *\
-|* FunciÛn que muestra los par·metros con los que *|
+|* Funci√≥n que muestra los par√°metros con los que *|
 |* se debe llamar al programa                     *|
 \* ---------------------------------------------- */
 
@@ -1260,11 +1260,11 @@ leyenda ()
   fprintf (stdout, "\nHa llamado mal al programa. Uso: \n");
   fprintf (stdout, " $ clien <ARG1> <ARG2> <ARG3> <ARG4> <ARG5> \n\n");
   fprintf (stdout,
-	   "\t<ARG1>: llave del sem·foro y de la memoria compartida\n");
-  fprintf (stdout, "\t<ARG2>: n˙mero de almacÈn\n");
-  fprintf (stdout, "\t<ARG3>: n˙mero de distrito\n");
-  fprintf (stdout, "\t<ARG4>: n˙mero total de almacenes\n");
-  fprintf (stdout, "\t<ARG5>: modo de ejecuciÛn\n\n");
+	   "\t<ARG1>: llave del sem√°foro y de la memoria compartida\n");
+  fprintf (stdout, "\t<ARG2>: n√∫mero de almac√©n\n");
+  fprintf (stdout, "\t<ARG3>: n√∫mero de distrito\n");
+  fprintf (stdout, "\t<ARG4>: n√∫mero total de almacenes\n");
+  fprintf (stdout, "\t<ARG5>: modo de ejecuci√≥n\n\n");
 }
 
 int
@@ -1272,30 +1272,30 @@ main (int argc, char *argv[])
 {
 
 /* ---------------------------------------------- *\
-|* FunciÛn principal del programa                 *|
+|* Funci√≥n principal del programa                 *|
 |* ---------------------------------------------- *|
-|* Argumento 1= llave del sem·foro y de la memoria*|
+|* Argumento 1= llave del sem√°foro y de la memoria*|
 |* compartida.                                    *|
-|* Argumento 2= almacÈn del ETR                   *|
+|* Argumento 2= almac√©n del ETR                   *|
 |* Argumento 3= distrito del ETR                  *|
-|* Argumento 4= n˙mero total de almacenes         *|
-|* Argumento 5= modo de ejecuciÛn:                *|
+|* Argumento 4= n√∫mero total de almacenes         *|
+|* Argumento 5= modo de ejecuci√≥n:                *|
 |* Argumento 6= server id                         *|
 |* salida por pantalla o a /dev/null              *|
 \* ---------------------------------------------- */
 
-  void sigterm ();		/*puntero a la funciÛn sigterm()  */
-  void ctl_c ();		/*puntero a la funciÛn ctl_c()    */
+  void sigterm ();		/*puntero a la funci√≥n sigterm()  */
+  void ctl_c ();		/*puntero a la funci√≥n ctl_c()    */
 
-  int w;			/*almacÈn del terminal            */
-  struct sembuf operacion;	/*estrctura de operaciÛn sobre el sem·foro */
-  char n_fichero[30];		/*cadena que contiene el nombre del fichero de bit·cora */
-  char ssystem[200];		/*cadena donde se almacena la oden de copia de focheros de bit·cora */
+  int w;			/*almac√©n del terminal            */
+  struct sembuf operacion;	/*estrctura de operaci√≥n sobre el sem√°foro */
+  char n_fichero[30];		/*cadena que contiene el nombre del fichero de bit√°cora */
+  char ssystem[200];		/*cadena donde se almacena la oden de copia de focheros de bit√°cora */
   struct timeb sellohora;
   struct timeb sellohora2;	/* estructuras para almacenar sellos de hora */
   int tpensar;			/*tiempo de pensar del cliente */
   int carta = 0;
-/*   Baraja para la implementaciÛn de las transacciones  */
+/*   Baraja para la implementaci√≥n de las transacciones  */
   char baraja[] = { NEW_ORDER, NEW_ORDER, NEW_ORDER, NEW_ORDER, NEW_ORDER,
     NEW_ORDER, NEW_ORDER, NEW_ORDER, NEW_ORDER, NEW_ORDER,
     PAYMENT, PAYMENT, PAYMENT, PAYMENT, PAYMENT,
@@ -1311,15 +1311,15 @@ main (int argc, char *argv[])
 
   int srv_id;
 
-/*Se comprueba que se han pasado correctamente los par·metros al programa*/
+/*Se comprueba que se han pasado correctamente los par√°metros al programa*/
   if (argc != 7)
      {
-       leyenda ();		/*Se avisa mediante la funciÛn leyenda si se ha pasado */
-       /* un n˙mero incorrecto de par·metros */
+       leyenda ();		/*Se avisa mediante la funci√≥n leyenda si se ha pasado */
+       /* un n√∫mero incorrecto de par√°metros */
        exit (-1);		/*y se sale del programa */
      }
   else
-    /*Si alguno de los argumentos no es un n˙mero entero se informa */
+    /*Si alguno de los argumentos no es un n√∫mero entero se informa */
     /*mediante leyenda() y se sale del programa                     */
   if (!es_entero (argv[1]) || !es_entero (argv[2]) || !es_entero (argv[3])
 	|| !es_entero (argv[4]) || !es_entero (argv[5]))
@@ -1328,15 +1328,15 @@ main (int argc, char *argv[])
        exit (-1);
      }
 
-/* Extraemos los par·metros */
-  w = atoi (argv[4]);		/*n˙mero de almacenes */
-  w_id = atoi (argv[2]);	/*asignamos un almacÈn al terminal */
+/* Extraemos los par√°metros */
+  w = atoi (argv[4]);		/*n√∫mero de almacenes */
+  w_id = atoi (argv[2]);	/*asignamos un almac√©n al terminal */
   d_id = atoi (argv[3]);	/*asignamos un distrito al terminal */
   llave = LLAVE_COLA;		/*llave de la cola TODOS LOS CLIENTES COMPARTEN LA MISMA LLAVE */
   srv_id = atoi(argv[6]);
 
 
-/*Se activan las funciones de tratamiento de las seÒales SIGTERM y SIGINT*/
+/*Se activan las funciones de tratamiento de las se√±ales SIGTERM y SIGINT*/
   if (signal (SIGTERM, sigterm) == SIG_ERR)
      {
        fprintf (stderr, "Error en SIGNAL (SIGTERM)\n");
@@ -1351,7 +1351,7 @@ main (int argc, char *argv[])
      }
 
 
-/*Se determina el modo de ejecuciÛn en funciÛn del quinto par·metro de la llamada*/
+/*Se determina el modo de ejecuci√≥n en funci√≥n del quinto par√°metro de la llamada*/
   if (argv[5][0] == '1')
      {
        /* Salida a null */
@@ -1365,28 +1365,28 @@ main (int argc, char *argv[])
      }
 
 
-/*Se genera el nombre del fichero de bit·cora a partir del n˙mero*/
-/*de almacÈn y de terminal que se pasan como par·metros          */
+/*Se genera el nombre del fichero de bit√°cora a partir del n√∫mero*/
+/*de almac√©n y de terminal que se pasan como par√°metros          */
 
   sprintf (n_fichero, "/tmp/F_%d_%d.log\0", w_id, d_id);
   if ((flog = fopen (n_fichero, "w")) == NULL)
      {
-       fprintf (stderr, "ERROR AL ABRIR EL FICHERO DE BIT¡CORA\n");
+       fprintf (stderr, "ERROR AL ABRIR EL FICHERO DE BIT√ÅCORA\n");
        exit (-1);
      }
 
 
-/*se almacena el nombre del fichero de bit·cora para usarlo posteriormente*/
+/*se almacena el nombre del fichero de bit√°cora para usarlo posteriormente*/
   sprintf (n_fichero, "F_%d_%d.log\0", w_id, d_id);
 
-/*Se determina la semilla inicial para la creaciÛn de vectores de estaso*/
-/*para la generaciÛn de n˙meros aleatÛrios                              */
+/*Se determina la semilla inicial para la creaci√≥n de vectores de estaso*/
+/*para la generaci√≥n de n√∫meros aleat√≥rios                              */
   semilla = (int) (w_id * 100 + d_id);
 
 /*	estado de uso general		*/
   initstate (semilla++, e_global, 32);
 
-/*	generaciÛn de datos new_order      */
+/*	generaci√≥n de datos new_order      */
   initstate (semilla++, estado[E_NO_D_ID], 32);
   initstate (semilla++, estado[E_NO_C_ID], 32);
   initstate (semilla++, estado[E_NO_A_C_ID], 32);
@@ -1398,7 +1398,7 @@ main (int argc, char *argv[])
   initstate (semilla++, estado[E_NO_R_W], 32);
   initstate (semilla++, estado[E_NO_OL_QUAN], 32);
 
-/*generaciÛn de datos payment*/
+/*generaci√≥n de datos payment*/
   initstate (semilla++, estado[E_P_D_ID], 32);
   initstate (semilla++, estado[E_P_SELEC], 32);
   initstate (semilla++, estado[E_P_C_LAST], 32);
@@ -1410,7 +1410,7 @@ main (int argc, char *argv[])
   initstate (semilla++, estado[E_P_C_D_ID], 32);
   initstate (semilla++, estado[E_P_H_AMOUNT], 32);
 
-/*generaciÛn de datos order status*/
+/*generaci√≥n de datos order status*/
   initstate (semilla++, estado[E_OS_D_ID], 32);
   initstate (semilla++, estado[E_OS_SELEC], 32);
   initstate (semilla++, estado[E_OS_C_LAST], 32);
@@ -1418,13 +1418,13 @@ main (int argc, char *argv[])
   initstate (semilla++, estado[E_OS_C_ID], 32);
   initstate (semilla++, estado[E_OS_A_C_ID], 32);
 
-/*generaciÛn de datos order delivery*/
+/*generaci√≥n de datos order delivery*/
   initstate (semilla++, estado[E_D_O_CARR], 32);
 
-/*generaciÛn de datos order stock level*/
+/*generaci√≥n de datos order stock level*/
   initstate (semilla++, estado[E_SL_THR], 32);
 
-/*generaciÛn de estado para la elecciÛn de transacciones*/
+/*generaci√≥n de estado para la elecci√≥n de transacciones*/
   initstate (semilla++, estado[E_TRAN], 32);
 
 /*generacion de estados para los tiempos de pensar */
@@ -1455,9 +1455,9 @@ main (int argc, char *argv[])
      {
        switch (errno)
 	  {			/*se trata el posible error */
-	  case ENOENT:		/*la cola no est· creada */
+	  case ENOENT:		/*la cola no est√° creada */
 	    fprintf (out, "No Hay Cola de Mensajes\n");
-	    fprintf (out, "Compruebe que el tm se estÈ ejecutando \n");
+	    fprintf (out, "Compruebe que el tm se est√© ejecutando \n");
 	    exit (-1);		/*Salimos del programa en caso de error */
 	  default:		/*si es otro error */
 	    fprintf (out,
@@ -1506,7 +1506,7 @@ main (int argc, char *argv[])
      }				/*En este punto la memoria ha sido creada correctamente */
 
   fprintf (out, "Llave shm: %d", llave);
-  men.tran.msgtrm.shm_llave = llave;	/*Se introdce en el mensaje de conexiÛn la llave de la memoria para */
+  men.tran.msgtrm.shm_llave = llave;	/*Se introdce en el mensaje de conexi√≥n la llave de la memoria para */
   /*que el MT se enganche a ese segmento                             */
 
   shm = shmat (shmid, 0, 0);	/*El cliente enlaza con la memoria compartida */
@@ -1524,18 +1524,18 @@ main (int argc, char *argv[])
 
 /*En este punto ya conocemos el identificador del semaforo */
   fprintf (out, "Llave semaforo: %d", llave);
-  men.tran.msgtrm.sem_llave = w_id;	/*se introduce en el mensaje de conexiÛn la llave del set de semaforos */
-  men.tran.msgtrm.sem_ident = d_id - 1;	/*se introduce en el mensaje de conexiÛn el indice dentro del set (DESDE CERO!) */
+  men.tran.msgtrm.sem_llave = w_id;	/*se introduce en el mensaje de conexi√≥n la llave del set de semaforos */
+  men.tran.msgtrm.sem_ident = d_id - 1;	/*se introduce en el mensaje de conexi√≥n el indice dentro del set (DESDE CERO!) */
 
   semun_arg.val = 0;
-  semctl (semid, d_id - 1, SETVAL, semun_arg);	/*inicializamos el semaforo a 0: ser· el TM quien lo abra */
+  semctl (semid, d_id - 1, SETVAL, semun_arg);	/*inicializamos el semaforo a 0: ser√° el TM quien lo abra */
   /* permitiendonos leer la respuesta                      */
 
   fprintf (out, "ID. SEM: %d, ID. SHM: %d\n", semid, shmid);
 
 /**********EL CLIENTE ENVIA EL MENSAJE DE CONEXION*********/
   men.tipo = MSGTRM;		/*Tipo de mensaje = mensaje de terminal */
-  men.tran.msgtrm.codctl = CONECTAR;	/*de conexiÛn */
+  men.tran.msgtrm.codctl = CONECTAR;	/*de conexi√≥n */
   msgsnd (colid, &men, sizeof (men) - sizeof (men.tipo), 0);	/*Se envia el mensaje */
   fprintf (out,
 	   "\n ENVIADA SOLICITUD DE CONEXION \n Esperando respuesta ...\n");
@@ -1547,51 +1547,51 @@ main (int argc, char *argv[])
   operacion.sem_flg = 0;
   semop (semid, &operacion, 1);
 
-/*En este punto el TM ha contestado asignando un n˙mero de terminal*/
+/*En este punto el TM ha contestado asignando un n√∫mero de terminal*/
   fprintf (out,
 	   "CONEXION REALIZADA. \nCliente: NUMERO DE TERMINAL ASIGNADO: %d\n",
 	   shm->id);
   fflush (out);
   cod_term = shm->id;		/*codigo de terminal asignado */
 
-/*INICIALIZAMOS LA BARAJA: el vector ind_baraja contendr· una permutaciÛn*/
-/*de n˙mero entre 0 y 22 que indicar· la posiciÛn del vector baraja que  */
-/*ser· el siguiente tipo de transacciÛn seleccionado                     */
+/*INICIALIZAMOS LA BARAJA: el vector ind_baraja contendr√° una permutaci√≥n*/
+/*de n√∫mero entre 0 y 22 que indicar√° la posici√≥n del vector baraja que  */
+/*ser√° el siguiente tipo de transacci√≥n seleccionado                     */
   posicion_cartas (ind_baraja, 23, estado[E_TRAN]);
 
   while (flag == 0)
      {
 /*El ETR permanece en este bucle hasta que el Controlador del Benchmark le */
-/*envÌe la seÒal SIGTERM, momento en el se pone el flag a 1 mediante la    */
-/*funciÛn sigterm()                                                        */
-/******* ELECCI”N  DE TRANSACCI÷N SEG⁄N MEZCLA DE TRANSACCIONES *******/
+/*env√≠e la se√±al SIGTERM, momento en el se pone el flag a 1 mediante la    */
+/*funci√≥n sigterm()                                                        */
+/******* ELECCI√ìN  DE TRANSACCI√ñN SEG√öN MEZCLA DE TRANSACCIONES *******/
        if (carta >= 23)
 	  {			/*si se ha racorrido la baraja se renueba */
 	    posicion_cartas (ind_baraja, 23, estado[E_TRAN]);
 	    carta = 0;
 	  }
-       /*Se selecciona el tipo de transacciÛn recorriendo el vector de apuntadores */
+       /*Se selecciona el tipo de transacci√≥n recorriendo el vector de apuntadores */
        /*a la baraja ind_baraja                                                    */
        tipo = baraja[ind_baraja[carta++]];
 
-       ftime (&sellohora);	/* Sello de hora de comienzo de transacciÛn              */
-       /*Se escribe en la bit·cora el tipo de transacciÛn seleccionado y el sello   */
+       ftime (&sellohora);	/* Sello de hora de comienzo de transacci√≥n              */
+       /*Se escribe en la bit√°cora el tipo de transacci√≥n seleccionado y el sello   */
        /*de hora de comienzo                                                        */
        fprintf (flog, "\n*%d> %d %d ", tipo, sellohora.time,
 		sellohora.millitm);
 
-       /*Se discrimina el tipo de transacciÛn a ejecutar                            */
-       men.tipo = tipo;    /*Tipo de transecciÛn que enviamos */
+       /*Se discrimina el tipo de transacci√≥n a ejecutar                            */
+       men.tipo = tipo;    /*Tipo de transecci√≥n que enviamos */
        men.id = cod_term;  /*Idenentificador de terminal */
        men.srv_id = srv_id; /* Server/warehouse identifier */
        switch (tipo)
 	  {
 	    /*Dependiendo del tipo de transaccion hacemos lo que corresponda */
 	  case NEW_ORDER:		/********TRANSACCION NEW ORDER*********/
-	    /*patalla de introducciÛn de datos */
+	    /*patalla de introducci√≥n de datos */
 	    pant_new_order_pet ();
 
-	    /*GENERACI”N DE DATOS DE TRANSACCI”N */
+	    /*GENERACI√ìN DE DATOS DE TRANSACCI√ìN */
 	    genera_datos_new_order (w, &men.tran.new_order);
 
 	    /* TIEMPO DE TECLADO */
@@ -1600,12 +1600,12 @@ main (int argc, char *argv[])
 	    /*Mostrar datos introducidos */
 	    pant_new_order_muest (&men.tran.new_order);
 
-	    /*PRIMER SELLO DE HORA: sello de envÌo */
+	    /*PRIMER SELLO DE HORA: sello de env√≠o */
 	    ftime (&sellohora);
-	    /*Se escribe en la bit·cora el sello de hora */
+	    /*Se escribe en la bit√°cora el sello de hora */
 	    fprintf (flog, "%d %d ", sellohora.time, sellohora.millitm);
 
-	    /*Se envÌa la transacciÛn a travÈs de la cola de mensajes */
+	    /*Se env√≠a la transacci√≥n a trav√©s de la cola de mensajes */
 	    msgsnd (colid, &men, sizeof (men) - sizeof (men.tipo), 0);
 
 	    /*Se espera a que el MT responda */
@@ -1615,36 +1615,36 @@ main (int argc, char *argv[])
 	    semop (semid, &operacion, 1);	/*esperamos a que el semaforo este a 1 para */
 	    /*recoger la respuesta */
 	    /*y cerramos el semaforo para esperar otro mensaje */
-	    /*SEGUNDO SELLO DE HORA: recepciÛn de resultados */
+	    /*SEGUNDO SELLO DE HORA: recepci√≥n de resultados */
 	    ftime (&sellohora2);
 
 	    /*RESULTADO DE LA TRANSACCION */
 	    /*Imprimir pantalla de menu */
 	    pant_new_order_menu (&men.tran.new_order);
 
-	    /*Se calcula el tiempo de respuesta de tranasacciÛn como la diferencia */
+	    /*Se calcula el tiempo de respuesta de tranasacci√≥n como la diferencia */
 	    /*de los dos sellos de hora anteriores, y se escribe en el fichero de */
-	    /*bit·cora                                                            */
+	    /*bit√°cora                                                            */
 	    fprintf (flog, "%f ", resta_tiempos (&sellohora, &sellohora2));
 
 	    /* calculo de Tiempo de Pensar */
 	    tpensar =
 	      (int) aleat_tpensar (TMP_NEW_ORDER, estado[E_TP_NEW_ORDER]);
-	    fprintf (flog, "%d ", tpensar);	/*Se escribe en la bit·cora */
+	    fprintf (flog, "%d ", tpensar);	/*Se escribe en la bit√°cora */
 
 	    /*Se espera el tiempo de pensar */
 	    sleep (tpensar);
-	    /*imprimimos la informaciÛn acerca de la ejecuciÛn de la transacciÛn */
+	    /*imprimimos la informaci√≥n acerca de la ejecuci√≥n de la transacci√≥n */
 	    fprintf (flog, "%d %d %d ", shm->new_order.ctl,
 		     shm->new_order.o_ol_cnt, art_remoto);
 
 	    break;
 
 	  case PAYMENT:	/********TRANSACCION PAYMENT*********/
-	    /*patalla de introducciÛn de datos */
+	    /*patalla de introducci√≥n de datos */
 	    pant_payment_pet ();
 
-	    /*GENERACI”N DE DATOS DE TRANSACCI”N */
+	    /*GENERACI√ìN DE DATOS DE TRANSACCI√ìN */
 	    genera_datos_payment (w, &men.tran.payment);
 
 	    /* TIEMPO DE TECLADO */
@@ -1657,7 +1657,7 @@ main (int argc, char *argv[])
 	    ftime (&sellohora);
 	    /*Se escribe el sello de hora */
 	    fprintf (flog, "%d %d ", sellohora.time, sellohora.millitm);
-	    /*Mandar transacciciÛn */
+	    /*Mandar transaccici√≥n */
 	    msgsnd (colid, &men, sizeof (men) - sizeof (men.tipo), 0);
 	    /*enviamos el mensaje y esperamos la respuesta */
 	    operacion.sem_num = d_id - 1;
@@ -1669,23 +1669,23 @@ main (int argc, char *argv[])
 	    ftime (&sellohora2);
 	    /*Imprimir pantalla de menu */
 	    pant_payment_menu (&men.tran.payment);
-	    /*Se calcula el tiempo de respuesta de transacciÛn y se escribe en */
-	    /* la bit·cora                                                    */
+	    /*Se calcula el tiempo de respuesta de transacci√≥n y se escribe en */
+	    /* la bit√°cora                                                    */
 	    fprintf (flog, "%f ", resta_tiempos (&sellohora, &sellohora2));
-	    /* calculo del tiempo de pensar y se escribe en la bit·cora */
+	    /* calculo del tiempo de pensar y se escribe en la bit√°cora */
 	    tpensar = (int) aleat_tpensar (TMP_PAYMENT, estado[E_TP_PAYMENT]);
 	    fprintf (flog, "%d ", tpensar);
 	    /*TIEMPO DE PENSAR */
 	    sleep (tpensar);
-	    /*imprimimos la informaciÛn acerca de la ejecuciÛn de la transacciÛn */
+	    /*imprimimos la informaci√≥n acerca de la ejecuci√≥n de la transacci√≥n */
 	    fprintf (flog, "0 %d %d ", paym_remota, clien_paym);
 
 	    break;
 
 	  case ORDER_STATUS:		/********TRANSACCION ORDER_STATUS*********/
-	    /*Pantalla de introducciÛn de datos */
+	    /*Pantalla de introducci√≥n de datos */
 	    pant_ostatus_pet ();
-	    /*GENERACI”N DE DATOS DE TRANSACCI”N */
+	    /*GENERACI√ìN DE DATOS DE TRANSACCI√ìN */
 	    genera_datos_order_status (w, &men.tran.ostatus);
 
 	    /*TIEMPO DE TECLADO */
@@ -1696,9 +1696,9 @@ main (int argc, char *argv[])
 
 	    /*PRIMER SELLO DE HORA */
 	    ftime (&sellohora);
-	    /*Se escribe el sello en la bit·cora */
+	    /*Se escribe el sello en la bit√°cora */
 	    fprintf (flog, "%d %d ", sellohora.time, sellohora.millitm);
-	    /*Mandar transacciciÛn */
+	    /*Mandar transaccici√≥n */
 	    msgsnd (colid, &men, sizeof (men) - sizeof (men.tipo), 0);
 	    /*Se espera a que el MT responda */
 	    operacion.sem_num = d_id - 1;
@@ -1712,22 +1712,22 @@ main (int argc, char *argv[])
 	    /*Imprimir pantalla de menu */
 	    pant_ostatus_menu (&men.tran.ostatus);
 
-	    /*Se imprime el tiempo de respuesta y se escribe en la bit·cora */
+	    /*Se imprime el tiempo de respuesta y se escribe en la bit√°cora */
 	    fprintf (flog, "%f ", resta_tiempos (&sellohora, &sellohora2));
-	    /* Se calcula el tiempo de pensar y se escribe en la bit·cora */
+	    /* Se calcula el tiempo de pensar y se escribe en la bit√°cora */
 	    tpensar = (int) aleat_tpensar (TMP_OSTATUS, estado[E_TP_OSTATUS]);
 	    fprintf (flog, "%d ", tpensar);
 
 	    /*TIEMPO DE PENSAR */
 	    sleep (tpensar);
-	    /*imprimimos la informaciÛn acerca de la ejecuciÛn de la transacciÛn */
+	    /*imprimimos la informaci√≥n acerca de la ejecuci√≥n de la transacci√≥n */
 	    fprintf (flog, "0 %d 0 ", clien_os);
 	    break;
 
 	  case DELIVERY:		  /********TRANSACCION DELIVERY*********/
-	    /*Pantalla de introducciÛn de datos */
+	    /*Pantalla de introducci√≥n de datos */
 	    pant_delivery_pet ();
-	    /*GENERACI”N DE DATOS DE TRANSACCI”N */
+	    /*GENERACI√ìN DE DATOS DE TRANSACCI√ìN */
 	    genera_datos_delivery (w, &men.tran.delivery);
 	    /*TIEMPO DE TECLADO */
 	    sleep (TT_DELIVERY);
@@ -1736,24 +1736,24 @@ main (int argc, char *argv[])
 
 	    /*PRIMER SELLO DE HORA */
 	    ftime (&sellohora);
-	    /*Se escribe el sello en la bit·cora */
+	    /*Se escribe el sello en la bit√°cora */
 	    fprintf (flog, "%d %d ", sellohora.time, sellohora.millitm);
 	    /*Se manda al tm el primen sello de hora para poder calcular */
-	    /*el tiempo de ejecuciÛn                                                                        */
+	    /*el tiempo de ejecuci√≥n                                                                        */
 	    men.tran.delivery.seg = sellohora.time;
 	    men.tran.delivery.mseg = sellohora.millitm;
-	    /*Mandar transacciciÛn */
+	    /*Mandar transaccici√≥n */
 	    msgsnd (colid, &men, sizeof (men) - sizeof (men.tipo), 0);
 
 	    /*SEGUNDO SELLO DE HORA */
 	    ftime (&sellohora2);
 	    /*RESULTADO DE LA TRANSACCION */
-	    /*Imprimir pantalla de men˙ */
+	    /*Imprimir pantalla de men√∫ */
 	    pant_delivery_menu (&men.tran.delivery);
-	    /*Se calcula el tiempo de respuesta (encolado) y se escribe en la bit·cora */
+	    /*Se calcula el tiempo de respuesta (encolado) y se escribe en la bit√°cora */
 	    fprintf (flog, "%f ", resta_tiempos (&sellohora, &sellohora2));
 
-	    /* Se calcula el tiempo de pensar y se escribe en la bit·cora */
+	    /* Se calcula el tiempo de pensar y se escribe en la bit√°cora */
 	    tpensar =
 	      (int) aleat_tpensar (TMP_DELIVERY, estado[E_TP_DELIVERY]);
 	    fprintf (flog, "%d ", tpensar);
@@ -1763,9 +1763,9 @@ main (int argc, char *argv[])
 	    break;
 
 	  case STOCK_LEVEL:			/********TRANSACCION STOCK_LEVEL*********/
-	    /*Pantalla de introducciÛn de datos */
+	    /*Pantalla de introducci√≥n de datos */
 	    pant_stock_level_pet ();
-	    /*GENERACI”N DE DATOS DE TRANSACCI”N */
+	    /*GENERACI√ìN DE DATOS DE TRANSACCI√ìN */
 	    genera_datos_stock_level (w, &men.tran.stock_level);
 	    /*TIEMPO DE TECALDO */
 	    sleep (TT_STOCK_LEVEL);
@@ -1776,9 +1776,9 @@ main (int argc, char *argv[])
 	    ftime (&sellohora);
 	    /*Se imprime el sello de hora */
 	    fprintf (flog, "%d %d ", sellohora.time, sellohora.millitm);
-	    /*Mandar transacciÛn */
+	    /*Mandar transacci√≥n */
 	    msgsnd (colid, &men, sizeof (men) - sizeof (men.tipo), 0);
-	    /*Se envia la transacciÛn y se espera a que el MT responda */
+	    /*Se envia la transacci√≥n y se espera a que el MT responda */
 	    operacion.sem_num = d_id - 1;
 	    operacion.sem_op = -1;
 	    operacion.sem_flg = 0;
@@ -1788,9 +1788,9 @@ main (int argc, char *argv[])
 	    ftime (&sellohora2);
 	    /*Imprimir pantalla de menu */
 	    pant_stock_level_menu (&men.tran.stock_level);
-	    /*Se calcula el tiempo de respuesta y se escribe en la bit·cora */
+	    /*Se calcula el tiempo de respuesta y se escribe en la bit√°cora */
 	    fprintf (flog, "%f ", resta_tiempos (&sellohora, &sellohora2));
-	    /* Se calcula el tiempo de pensar y se escribe en la bit·cora */
+	    /* Se calcula el tiempo de pensar y se escribe en la bit√°cora */
 	    tpensar =
 	      (int) aleat_tpensar (TMP_STOCK_LEVEL, estado[E_TP_STOCK_LEVEL]);
 	    fprintf (flog, "%d ", tpensar);
@@ -1799,25 +1799,25 @@ main (int argc, char *argv[])
 	    fprintf (flog, "0 0 0 ");
 	    break;
 
-	  default:		/*Se sale del programa en caso de que la selecciÛn del tipo */
-	    /*de transacciÛn haya fallado */
+	  default:		/*Se sale del programa en caso de que la selecci√≥n del tipo */
+	    /*de transacci√≥n haya fallado */
 	    fprintf (out, "Aleat_int ha sobrepasado el rango\n");
 	    exit (-1);
 	  }			/* switch */
-       /*Se toma el sello de hora de finalizaciÛn de la transacciÛn y */
-       /*se escreibe en la bit·cora                                 */
+       /*Se toma el sello de hora de finalizaci√≥n de la transacci√≥n y */
+       /*se escreibe en la bit√°cora                                 */
        ftime (&sellohora);
        fprintf (flog, "%d %d ", sellohora.time, sellohora.millitm);
      }				/* de while */
 
-/*Cuando el Controlador del Benchmark envÌa la seÒal SIGTERM se deja de enviar transacciones*/
-/*y se manda al TM un mensaje de desconexiÛn.                                               */
+/*Cuando el Controlador del Benchmark env√≠a la se√±al SIGTERM se deja de enviar transacciones*/
+/*y se manda al TM un mensaje de desconexi√≥n.                                               */
 /* MENSAJE DE DESCONEXION DEL TM*/
   fprintf (out, "\nTerminal %d: ENVIANDO SOLICITUD DE DESCONEXION ... \n",
 	   cod_term);
-/*Escribimos el mensaje de desconexiÛn*/
+/*Escribimos el mensaje de desconexi√≥n*/
   men.tipo = MSGTRM;		/*tipo de mensaje: mensaje de terminal */
-  men.tran.msgtrm.codctl = DESCONECTAR;	/*de desconexiÛn */
+  men.tran.msgtrm.codctl = DESCONECTAR;	/*de desconexi√≥n */
   men.id = cod_term;		/*identificador de terminal */
 
 /*forzamos el valor del semaforo a 0*/
@@ -1827,7 +1827,7 @@ main (int argc, char *argv[])
        fprintf (out, "EROR AL ASIGNAR VALOR AL SEMAFORO\n");
      };
 
-/*Se envia el mensaje de desconexiÛn*/
+/*Se envia el mensaje de desconexi√≥n*/
   msgsnd (colid, &men, sizeof (men) - sizeof (men.tipo), 0);
   /*Se espera a que el MT responda */
   operacion.sem_num = d_id - 1;
@@ -1835,7 +1835,7 @@ main (int argc, char *argv[])
   operacion.sem_flg = 0;
   if (semop (semid, &operacion, 1) == -1)
      {
-       fprintf (out, "ERROR EN EL SEMAFORO EN LA DESCONEXI”N DEL SERVIDOR\n");
+       fprintf (out, "ERROR EN EL SEMAFORO EN LA DESCONEXI√ìN DEL SERVIDOR\n");
        fprintf (out, "error no: %d\n, %s", errno, strerror (errno));
      };
   fprintf (out, "DESCONECTADO DEL SERVIDOR\n");
@@ -1844,7 +1844,7 @@ main (int argc, char *argv[])
 /*Removing semaphores*/
 // diego: Now this is done in bench.c.
 // if (semctl(semid,d_id-1,IPC_RMID,0) == -1){
-  // fprintf(out,"PROBLEMAS PARA BORRAR EL SEMAFORO EN LA DESCONEXI”N\n");
+  // fprintf(out,"PROBLEMAS PARA BORRAR EL SEMAFORO EN LA DESCONEXI√ìN\n");
   // switch(errno){
   // case EIDRM: fprintf(out,"El semaforo ya estaba eliminada\n");
   // break;
@@ -1858,7 +1858,7 @@ main (int argc, char *argv[])
   if (shmdt (shm) == -1)
      {
        fprintf (out,
-		"PROBLEMAS PARA DESENGANCHARSE DE MEMORIA EN LA DESCONEXI”N\n");
+		"PROBLEMAS PARA DESENGANCHARSE DE MEMORIA EN LA DESCONEXI√ìN\n");
        switch (errno)
 	  {
 	  case EIDRM:
@@ -1872,7 +1872,7 @@ main (int argc, char *argv[])
   /*Eliminamos la memoria compartida */
   if (shmctl (shmid, IPC_RMID, 0) == -1)
      {
-       fprintf (out, "PROBLEMAS PARA BORRAR MEMORIA EN LA DESCONEXI”N\n");
+       fprintf (out, "PROBLEMAS PARA BORRAR MEMORIA EN LA DESCONEXI√ìN\n");
        switch (errno)
 	  {
 	  case EIDRM:
@@ -1885,11 +1885,11 @@ main (int argc, char *argv[])
      };
 
   fprintf (out, "ENLACES BORRADOS\n");
-  fprintf (out, "MOVIENDO BIT¡CORA... ");
+  fprintf (out, "MOVIENDO BIT√ÅCORA... ");
 
   fclose (flog);
 
-/*Se mueve la bit·cora al directorio VARDIR. Se introduce la orden en */
+/*Se mueve la bit√°cora al directorio VARDIR. Se introduce la orden en */
 /*la cadena ssystem                                                   */
 
   strcpy (filenameBuffer, VARDIR);
@@ -1910,10 +1910,10 @@ void
 sigterm ()
 {
 /* ---------------------------------------------- *\
-|* FunciÛn de tratamiento de la seÒal SIGTERM     *|
+|* Funci√≥n de tratamiento de la se√±al SIGTERM     *|
 |* ---------------------------------------------- *|
-|* Modifica el flag que har· que se dejen de      *|
-|* enviar transacciones cuando llege la seÒal     *|
+|* Modifica el flag que har√° que se dejen de      *|
+|* enviar transacciones cuando llege la se√±al     *|
 |* SIGTERM                                        *|
 \* ---------------------------------------------- */
   if (signal (SIGTERM, sigterm) == SIG_ERR)
@@ -1922,19 +1922,19 @@ sigterm ()
        exit (-1);
      }
 
-  flag = 1;			/*ModificaciÛn del flag */
+  flag = 1;			/*Modificaci√≥n del flag */
   fprintf (out, "INICIANDO EL PROCESO DE APAGADO DEL TERMINAL %d ...\n",
 	   cod_term);
-  fprintf (out, "ESTOY REALIZANDO TRANSACCION n∫ %d\n", tipo);
+  fprintf (out, "ESTOY REALIZANDO TRANSACCION n¬∫ %d\n", tipo);
 }
 
 void
 ctl_c ()
 {
 /* ---------------------------------------------- *\
-|* FunciÛn de tratamiento de la seÒal SIGINT      *|
+|* Funci√≥n de tratamiento de la se√±al SIGINT      *|
 |* ---------------------------------------------- *|
-|* No realiza ninguna funciÛn. Su funciÛn en que  *|
+|* No realiza ninguna funci√≥n. Su funci√≥n en que  *|
 |* el ETR no se vea afectado por el ctrl-c        *|
 |* que introduce el usuario para parar el test.   *|
 \* ---------------------------------------------- */
