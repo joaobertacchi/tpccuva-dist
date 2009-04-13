@@ -1402,7 +1402,7 @@ int t_consumer(){
 				break;
 			}
 			/********************** EJECUCIÓN DE TRANSACCIÓN *************************/
-			if (srv_id == msg.srv_id){
+			if (srv_id == msg.srv_id)
 				trans_new_order(&msg.tran.new_order, clientela[msg.id].shm);
 			else
 				trans_new_order(&msg.tran.new_order, NULL);
