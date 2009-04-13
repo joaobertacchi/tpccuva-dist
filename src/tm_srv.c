@@ -643,7 +643,7 @@ int trans_payment(struct tpayment_men *payment, union tshm *shm){
 |*------------------------------------------------------------------*|
 |* Parámetro payment: puntero a la estructura de mensaje recibida.  *|
 |* Parámetro shm: Puntero a la memoria compartida donde se escriben.*|
-|* losresultados.                                                   *|
+|* losresultados. If shm is NULL then result is not saved in shm.   *|
 \* ---------------------------------------------------------------- */
 
 int i;
@@ -680,12 +680,14 @@ EXEC SQL BEGIN; /*Se comienza la transacción*/
 		return -1;
 	} /* if */
 
-	/*********RESPUESTA*********/
-	strcpy(shm->payment.w_street_1,w_street_1);
-	strcpy(shm->payment.w_street_2,w_street_2);
-	strcpy(shm->payment.w_city,w_city);
-	strcpy(shm->payment.w_state,w_state);
-	strcpy(shm->payment.w_zip,w_zip);
+	if (shm) {
+		/*********RESPUESTA*********/
+		strcpy(shm->payment.w_street_1,w_street_1);
+		strcpy(shm->payment.w_street_2,w_street_2);
+		strcpy(shm->payment.w_city,w_city);
+		strcpy(shm->payment.w_state,w_state);
+		strcpy(shm->payment.w_zip,w_zip);
+	}
 
 	
 	EXEC SQL UPDATE warehouse
@@ -720,13 +722,15 @@ EXEC SQL BEGIN; /*Se comienza la transacción*/
 		return -1;
 	} /* if */
 
-	/**RESPUESTA**/
-	strcpy(shm->payment.d_street_1,d_street_1);
-	strcpy(shm->payment.d_street_2,d_street_2);
-	strcpy(shm->payment.d_city,d_city);
-	strcpy(shm->payment.d_state,d_state);
-	strcpy(shm->payment.d_zip,d_zip);
-	/************/
+	if (shm) {
+		/**RESPUESTA**/
+		strcpy(shm->payment.d_street_1,d_street_1);
+		strcpy(shm->payment.d_street_2,d_street_2);
+		strcpy(shm->payment.d_city,d_city);
+		strcpy(shm->payment.d_state,d_state);
+		strcpy(shm->payment.d_zip,d_zip);
+		/************/
+	}
 
 	EXEC SQL UPDATE district
 		 SET d_ytd = d_ytd + :h_amount
@@ -815,24 +819,26 @@ EXEC SQL BEGIN; /*Se comienza la transacción*/
 
 	} /* if (c_id == 0) */
 
-	/**RESPUESTA**/
-	shm->payment.c_id=c_id;
-	strcpy(shm->payment.c_first,c_first);
-	strcpy(shm->payment.c_middle,c_middle);
-	strcpy(shm->payment.c_last,c_last);
-	strcpy(shm->payment.c_street_1,c_street_1);
-	strcpy(shm->payment.c_street_2,c_street_2);
-	strcpy(shm->payment.c_city,c_city);
-	strcpy(shm->payment.c_state,c_state);
-	strcpy(shm->payment.c_zip,c_zip);
-	strcpy(shm->payment.c_phone,c_phone);
-	strcpy(shm->payment.c_credit,c_credit);
-	strcpy(shm->payment.c_since,c_since);
-	shm->payment.c_credit_lim=c_credit_lim;
-	shm->payment.c_discount=c_discount;
-	shm->payment.c_balance=c_balance;
-	strcpy(shm->payment.h_date,h_date);
-	/************/
+	if (shm) {
+		/**RESPUESTA**/
+		shm->payment.c_id=c_id;
+		strcpy(shm->payment.c_first,c_first);
+		strcpy(shm->payment.c_middle,c_middle);
+		strcpy(shm->payment.c_last,c_last);
+		strcpy(shm->payment.c_street_1,c_street_1);
+		strcpy(shm->payment.c_street_2,c_street_2);
+		strcpy(shm->payment.c_city,c_city);
+		strcpy(shm->payment.c_state,c_state);
+		strcpy(shm->payment.c_zip,c_zip);
+		strcpy(shm->payment.c_phone,c_phone);
+		strcpy(shm->payment.c_credit,c_credit);
+		strcpy(shm->payment.c_since,c_since);
+		shm->payment.c_credit_lim=c_credit_lim;
+		shm->payment.c_discount=c_discount;
+		shm->payment.c_balance=c_balance;
+		strcpy(shm->payment.h_date,h_date);
+		/************/
+	}
 
 	EXEC SQL UPDATE customer
 		SET c_balance = c_balance - :h_amount, c_ytd_payment = c_ytd_payment + :h_amount, c_payment_cnt = c_payment_cnt +1
@@ -882,7 +888,8 @@ EXEC SQL BEGIN; /*Se comienza la transacción*/
 			EXEC SQL ROLLBACK WORK;
 			return -1;
 		} /* if */
-		strcpy(shm->payment.c_data,c_new_data);
+		if (shm)
+			strcpy(shm->payment.c_data,c_new_data);
 	} else 
 		c_new_data[0]='\0';
 
@@ -1425,7 +1432,10 @@ int t_consumer(){
 				break;
 			}
 			/********************** EJECUCIÓN DE TRANSACCIÓN *************************/
-			trans_payment(&msg.tran.payment, clientela[msg.id].shm);
+			if (srv_id == msg.srv_id)
+				trans_payment(&msg.tran.payment, clientela[msg.id].shm);
+			else
+				trans_payment(&msg.tran.payment, NULL);
 
 			/*********************	RESPUESTA DE TRANSACCIÓN**************************/
 			/* Answer given just if the question came from same warehouse */
