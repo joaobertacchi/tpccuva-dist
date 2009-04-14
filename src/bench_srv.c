@@ -199,7 +199,7 @@ char s_srv_id[n_chars_sid]; /* Max of 1000 srv_ids (000 - 999) */
 			
 				sprintf(men0, "clien\0");     /* Name of the program.                      */
 				sprintf(men1, "%i", llave); /* Key for the memory and semaphores.        */
-				sprintf(men2, "%i", i+1);   /* Terminal warehouse.                       */
+				sprintf(men2, "%i", srv_id+1); /* Terminal warehouse. Starts from 1.        */
 				sprintf(men3, "%i", d);     /* Terminal district.                        */
 				sprintf(men4, "%i", w);     /* Total number of warehouses                */
 				sprintf(men5, "1");         /* Execution mode. (1 = stdout to /dev/null) */

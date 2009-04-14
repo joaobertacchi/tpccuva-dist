@@ -72,7 +72,7 @@ class server_grp:
   def __init__(self, nodes):
     self.nodes = nodes # List of addresses tuples
     self.servers = [] # List of server objects
-    id = 0
+    id = 0 # Server id starts from zero
     for node in nodes:
       self.servers.append(server(node, id))
       id += 1
