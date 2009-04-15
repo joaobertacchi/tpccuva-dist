@@ -28,6 +28,7 @@ class server(Thread):
     #msg = str((cmd,) + data)
     msg = str((self.return_output, cmd) + data + (self.id,)) # Append server id in the end
     self.conn.send(msg)
+    print "Executing command in server %d" % self.id
 
   def get_answer(self):
     buffer = self.ans_queue.get()
@@ -100,7 +101,6 @@ class server_grp:
       if s.connected:
         s.execute(cmd, data, show_output, return_output)
 	executed = True
-	print "Executing command in server %d" % s.id
 
     # If no server have executed the command, let's finish the program.
     if not executed:

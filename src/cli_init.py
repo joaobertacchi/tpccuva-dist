@@ -222,6 +222,9 @@ def main_menu(has_bd, has_logs):
 				return option
 			elif option == 8:
 				return option
+			# Here for testing. Remove later.
+			#elif option == 12:
+			#	return option
 
 def send_command(data_str, sock):
   data_size = len(data_str)
@@ -252,6 +255,20 @@ def connection_closed(signum, frame):
     print "There is no server available anymore. Exiting..."
     servers.disconnect()
     sys.exit(0)
+
+def createdb(servers, params):
+  # Create database in one server
+  s = servers.servers[0] # Let's execute in the first server
+  s.execute(1, params, False, False)
+
+  # Create dump of db and compact it
+  s.execute(12, params, False, False)
+
+  # TODO: Copy dump to other servers
+  print "Copy tpcc_dump.gz file from server #%d to other servers" % s.id
+
+  # TODO: Execute dump on others servers
+  print "Populate databases using this dump file"
 
 if __name__ == "__main__":
   try:
@@ -295,7 +312,8 @@ if __name__ == "__main__":
       params = createdb_menu(NUM_MAX_ALM)
       if params != () and (params[0] == 'y' or params[0] == 'Y'):
         # Connect to server and make them to create the database
-        run = True
+        run = False # We don't want to execute this in all the servers
+	createdb(servers, params)
   
     elif cmd == 2:
       params = restore_menu()
@@ -325,6 +343,13 @@ if __name__ == "__main__":
       # Just run without asking anything
       params = ()
       run = True
+
+    #elif cmd == 12:
+    #  # Remove later. It's here just for testing.
+    #  params = ()
+    #  run = False
+    #  s = servers.servers[0]
+    #  s.execute(cmd, params, False, False)
   
     if run: servers.execute_all(cmd, params, False, False)
   

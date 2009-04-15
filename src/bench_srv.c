@@ -4646,6 +4646,17 @@ strcat(filenameBuffer,"medida.log");
 			fprintf(stdout, "%d\n", haybd);
 			break;
 
+		case 12: /* Dump and gzip the tpcc database */
+		{
+			char database[] = "tpcc";
+			char filename[] = "tpcc_dump.gz";
+			char dump_cmd[200];
+			fprintf(stdout, "Creating dump of %s database in %s file.\n", database, filename);
+			sprintf(dump_cmd, "pg_dump %s | gzip > %s", database, filename);
+			system(dump_cmd);
+			break;
+		}
+
 
 	}/*switch*/
 	}/*while*/

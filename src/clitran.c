@@ -1451,6 +1451,7 @@ main (int argc, char *argv[])
   fclose (fcons);
 
 /*creamos la cola de mensajes*/
+/* It uses the same msg queue for all terminals + tm */
   if ((colid = msgget (llave, IPC_CREAT | 0600)) == -1)
      {
        switch (errno)
