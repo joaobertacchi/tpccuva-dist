@@ -90,6 +90,23 @@ aleat_int (int inicio, int fin)
 		      (random () / (double) RAND_MAX)));
 }
 
+void
+convert(time_t t, char *cad)
+{
+/* ---------------------------------------------- *\
+|* Convert from time_t value to TPC-C ASCII       *|
+|* representation                                 *|
+|* ---------------------------------------------- *|
+|* Parámetro cad: cadena de caracteres donde se   *|
+|* almacena la la fecha y la hora del sistema.    *|
+\* ---------------------------------------------- */
+
+  struct tm *tm;
+
+  tm = localtime (&t);
+  sprintf (cad, "%02d-%02d-%02d %02d:%02d:%02d\0", 1900 + tm->tm_year,
+             1 + tm->tm_mon, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
+}
 
 char *
 getfechahora (char *cad)
@@ -107,12 +124,9 @@ getfechahora (char *cad)
 \* ---------------------------------------------- */
 
   time_t t;
-  struct tm *tm;
 
   time (&t);			/*se obtiene la fecha del sistema */
-  tm = localtime (&t);
-  sprintf (cad, "%02d-%02d-%02d %02d:%02d:%02d\0", 1900 + tm->tm_year,
-	   1 + tm->tm_mon, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
+  convert(t, cad);
   return cad;
 }
 

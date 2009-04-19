@@ -123,6 +123,8 @@ bool_t xdr_mensaje(XDR *xdrsp, struct mensaje *msg){
 		return (FALSE);
 	if (xdr_int(xdrsp, &msg->srv_id) != 1)
 		return (FALSE);
+	if (xdr_time_t(xdrsp, &msg->time) != 1)
+		return (FALSE);
         if (xdr_union(xdrsp, &msg->tipo, (char *) &msg->tran, choices, NULL) != 1)
                 return (FALSE);
 	return (TRUE);

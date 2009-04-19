@@ -4656,6 +4656,11 @@ strcat(filenameBuffer,"medida.log");
 			system(dump_cmd);
 			break;
 		}
+		/* 
+		 * TODO:
+		 * Restore command: createdb -T template0 tpcc; zcat tpcc_2_v1.dump.gz | psql tpcc
+		 * Reference: http://www.postgresql.org/docs/8.1/static/backup.html
+		 */
 
 
 	}/*switch*/

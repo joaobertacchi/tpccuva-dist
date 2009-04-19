@@ -148,6 +148,7 @@ struct mensaje{
 		int tipo;  /*TIPO DE MENSAJE */
   	        int id;     /*IDENTIFICADOR DE CLIENTE*/
 		int srv_id; /*Server id of server connected to the message sender client */
+		time_t time; /* Variable for arbitrary use */
 
                 /*TIPOS DE MENSAJES:*/
 		union ttran{	

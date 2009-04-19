@@ -220,6 +220,7 @@ struct tclientes{
 \* ---------------------------------------------------------------- */
 struct mensaje men; 
 int srv_id;
+time_t trans_start; /* Timestamp */
 
 /********************************************************************/
 
@@ -237,6 +238,7 @@ int i;
 double sum_amount; /*Suma de cantidades de artículo*/
 
 getfechahora(o_entry_d); /*Se toma la fecha y la hora del sistema*/
+/*convert(trans_start, o_entry_d);*/
 /******RESPUESTA EN MEMORIA COMPARTIDA***/
 if (shm == NULL)
 	fprintf(stdout, "Not copying o_entry_d to shm.\n");
@@ -662,6 +664,7 @@ strcpy(c_last, payment->c_last);
 c_id = payment->c_id;
 
 getfechahora(h_date); /*Se toma la fecha y la hora del sistema*/
+/*convert(trans_start, h_date);*/
 
 EXEC SQL BEGIN; /*Se comienza la transacción*/
 	EXEC SQL SELECT w_name, w_street_1, w_street_2, w_city, w_state, w_zip
@@ -1316,6 +1319,7 @@ EXEC SQL BEGIN; /*se comienza la transacción*/
 			} /* if */
 
 			getfechahora(ol_delivery_d); /*Se toma la fecha de reparto de la orden*/
+			/*convert(trans_start, ol_delivery_d);*/
 			/*Se escribe en las filas de order_line la fecha de reparto*/
 			EXEC SQL UPDATE order_line
 					SET ol_delivery_d = :ol_delivery_d
@@ -1389,6 +1393,7 @@ int t_consumer(){
     /* Get message from spread */
     if (SP_recv(buf_rcv, BUFSIZE)){
 	decode(&msg, buf_rcv, BUFSIZE);
+	trans_start = msg.time; /* Sets global variable */
     }
     else{
     	salir = 1;
@@ -1709,6 +1714,9 @@ llave= LLAVE_COLA;     /*llave de la cola */
 	      } /* switch */
 	      break;
 	    default:
+	      /* Let's use time variable to store the encoding time */
+              time(&men.time);
+
 	      if (encode(&men, buf_snd, BUFSIZE)){
 		/* Send message through spread */
 		SP_send(buf_snd, BUFSIZE);
